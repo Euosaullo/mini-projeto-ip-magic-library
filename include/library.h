@@ -1,8 +1,18 @@
-# Aqui deve ficar os protótipos das funções que mexem com o vetor de livros:
+#ifndef LIBRARY_H
+#define LIBRARY_H
 
-inicializarVetor
-cadastrarLivro
-deletarLivro
-mostrarLivro
-editarLivro
-listarTitulos
+#include "structs.h"
+
+void inicializarVetor(LivroMagico **biblioteca);
+
+void cadastrarLivro(LivroMagico **biblioteca);
+
+void deletarLivro(LivroMagico **biblioteca, int id);
+
+void mostrarLivro(LivroMagico **biblioteca, int id);
+
+void editarLivro(LivroMagico **biblioteca, int id);
+
+void listarTitulos(LivroMagico **biblioteca);
+
+#endif
