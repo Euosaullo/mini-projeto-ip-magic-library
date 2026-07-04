@@ -1,4 +1,4 @@
-# Aqui ficam as funções de criptografia
+# Aqui deve ficar as funções de criptografia
 
 criptografar
 descriptografar
