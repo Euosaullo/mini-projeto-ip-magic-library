@@ -1,4 +1,7 @@
-# Aqui deve ficar os protótipos das funções de criptografia:
+#ifndef ENCRYPTION_H
+#define ENCRYPTION_H
 
-criptografar
-descriptografar
+void criptografar(char *str);
+void descriptografar(char *str);
+
+#endif
