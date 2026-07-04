@@ -1,4 +1,9 @@
-# Aqui deve ficar os protótipos das funções de arquivo:
+#ifndef FILES_H
+#define FILES_H
 
-salvarBiblioteca
-carregarBiblioteca
+#include "structs.h"
+
+void salvarBiblioteca(LivroMagico **biblioteca, const char *nomeArquivo);
+void carregarBiblioteca(LivroMagico **biblioteca, const char *nomeArquivo);
+
+#endif
