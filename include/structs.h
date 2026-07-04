@@ -1,28 +1,29 @@
+/* Defines the core data structures used by the Magic Library system. */
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
-#define TAM_BIBLIOTECA 100
-#define TAM_TEXTO 100
+#define LIBRARY_SIZE 100
+#define TEXT_SIZE 100
 
 typedef struct
 {
-    int dia;
-    int mes;
-    int ano;
-} Data;
+    int day;
+    int month;
+    int year;
+} Date;
 
 typedef struct
 {
-    char nome[TAM_TEXTO];
-    Data data_nascimento;
-} Autor;
+    char name[TEXT_SIZE];
+    Date birthDate;
+} Author;
 
 typedef struct
 {
     int id;
-    char titulo[TAM_TEXTO];
-    Autor autor;
-    Data data_escrita;
-} LivroMagico;
+    char title[TEXT_SIZE];
+    Author author;
+    Date writingDate;
+} MagicBook;
 
 #endif
