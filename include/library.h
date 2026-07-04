@@ -1,13 +1,14 @@
+/* Declares the main library operations for managing magic books. */
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
 #include "structs.h"
 
-void inicializarVetor(LivroMagico **biblioteca);
-void cadastrarLivro(LivroMagico **biblioteca);
-void deletarLivro(LivroMagico **biblioteca, int id);
-void mostrarLivro(LivroMagico **biblioteca, int id);
-void editarLivro(LivroMagico **biblioteca, int id);
-void listarTitulos(LivroMagico **biblioteca);
+void initializeLibrary (MagicBook **library);
+void registerBook (MagicBook **library);
+void deleteBookById (MagicBook **library, int id);
+void displayBookById (MagicBook **library, int id);
+void updateBookById (MagicBook **library, int id);
+void listBookTitles (MagicBook **library);
 
 #endif
