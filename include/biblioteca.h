@@ -1,4 +1,4 @@
-# Aqui ficam os protótipos das funções que mexem com o vetor de livros
+# Aqui deve ficar os protótipos das funções que mexem com o vetor de livros
 
 inicializarVetor
 cadastrarLivro
