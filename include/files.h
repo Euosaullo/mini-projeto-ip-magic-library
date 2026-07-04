@@ -1,9 +1,10 @@
+/* Declares file persistence operations for saving and loading the library. */
 #ifndef FILES_H
 #define FILES_H
 
 #include "structs.h"
 
-void salvarBiblioteca(LivroMagico **biblioteca, const char *nomeArquivo);
-void carregarBiblioteca(LivroMagico **biblioteca, const char *nomeArquivo);
+void saveLibraryToFile(MagicBook **library, const char *fileName);
+void loadLibraryFromFile(MagicBook **library, const char *fileName);
 
 #endif
