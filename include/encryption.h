@@ -1,3 +1,4 @@
+/* Declares string encryption and decryption operations. */
 #ifndef ENCRYPTION_H
 #define ENCRYPTION_H
 
