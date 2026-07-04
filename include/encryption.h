@@ -1,7 +1,7 @@
 #ifndef ENCRYPTION_H
 #define ENCRYPTION_H
 
-void criptografar(char *str);
-void descriptografar(char *str);
+void encryptString (char *str);
+void decryptString (char *str);
 
 #endif
