@@ -1,3 +1,5 @@
+# Build commands for the Magic Library project.
+
 CC = gcc
 CFLAGS = -Wall -Wextra -ansi -pedantic -Iinclude
 
