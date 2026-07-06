@@ -2,14 +2,14 @@
 
 # MAGIC LIBRARY
 
-### RPG Book Inventory Backend in C
+### Backend de Inventário de Livros Mágicos em C
 
-`structs` · `pointers` · `dynamic allocation` · `file handling` · `encryption`
+`structs` · `ponteiros` · `alocação dinâmica` · `arquivos` · `criptografia`
 
-<img src="https://img.shields.io/badge/language-C-00599C?style=for-the-badge">
-<img src="https://img.shields.io/badge/compiler-GCC-orange?style=for-the-badge">
+<img src="https://img.shields.io/badge/linguagem-C-00599C?style=for-the-badge">
+<img src="https://img.shields.io/badge/compilador-GCC-orange?style=for-the-badge">
 <img src="https://img.shields.io/badge/interface-terminal-222222?style=for-the-badge">
-<img src="https://img.shields.io/badge/status-finished-brightgreen?style=for-the-badge">
+<img src="https://img.shields.io/badge/status-concluido-brightgreen?style=for-the-badge">
 
 </div>
 
@@ -34,92 +34,92 @@ Choose an option:
 
 ---
 
-## Quick Navigation
+## Navegação Rápida
 
-| Section | Description |
+| Seção | Descrição |
 |:---:|---|
-| [Overview](#overview) | General explanation of the project |
-| [Features](#features) | Menu options and system operations |
-| [RPG Attributes](#rpg-attributes) | Optional magical attributes for each book |
-| [Project Layout](#project-layout) | Folder and file organization |
-| [Build and Run](#build-and-run) | Bash and PowerShell commands |
-| [Memory Model](#memory-model) | How books are stored in memory |
-| [Save System](#save-system) | How file persistence works |
-| [Encryption](#encryption) | How book titles are protected |
-| [Team](#team) | Project members |
+| [Visão Geral](#visão-geral) | Explicação geral do projeto |
+| [Funcionalidades](#funcionalidades) | Opções do menu e operações do sistema |
+| [Atributos de RPG](#atributos-de-rpg) | Atributos mágicos opcionais dos livros |
+| [Estrutura do Projeto](#estrutura-do-projeto) | Organização das pastas e arquivos |
+| [Como Compilar e Executar](#como-compilar-e-executar) | Comandos para Bash e PowerShell |
+| [Modelo de Memória](#modelo-de-memória) | Como os livros são armazenados em memória |
+| [Sistema de Salvamento](#sistema-de-salvamento) | Como funciona a persistência em arquivo |
+| [Criptografia](#criptografia) | Como os títulos são protegidos |
+| [Equipe](#equipe) | Integrantes do projeto |
 
 ---
 
-## Overview
+## Visão Geral
 
-**Magic Library** is a terminal-based backend system written in C for managing magical books in a fictional RPG inventory.
+**Magic Library** é um sistema de backend em C para gerenciar uma biblioteca de livros mágicos em um inventário fictício de RPG.
 
-The project follows the requirements of Mini Project 03, using:
+O projeto foi desenvolvido para aplicar conceitos fundamentais da linguagem C, como:
 
 - `struct`
-- pointers
-- dynamic memory allocation
-- array of pointers
-- file handling
-- encrypted data persistence
+- ponteiros
+- alocação dinâmica de memória
+- vetor de ponteiros
+- manipulação de arquivos
+- criptografia de strings
 
-The program works like a small game backend. While it is running, the books are stored in memory. When the user chooses to save and exit, the system writes the current library state to a file. When the program is opened again with the same file, the saved books are loaded back into memory.
+Durante a execução, os livros ficam armazenados em memória. Quando o usuário escolhe salvar e sair, o programa grava os dados em um arquivo. Ao abrir o programa novamente com o mesmo arquivo, os livros são carregados de volta.
 
-This means the project simulates a simple **save game system**.
+Dessa forma, o sistema simula um pequeno **save game** para o inventário da biblioteca mágica.
 
 ---
 
-## Features
+## Funcionalidades
 
-| Menu Option | Feature | What it does |
+| Opção | Ação | O que faz |
 |:---:|:---:|---|
-| `1` | Register book | Allocates memory for a new book and stores it in the library |
-| `2` | Delete book | Searches a book by ID, frees its memory and clears its slot |
-| `3` | Display book | Shows all information about a specific book |
-| `4` | Update book | Allows selective editing of title, author, dates and RPG attributes |
-| `5` | List book titles | Shows all registered book IDs and titles |
-| `6` | Save and exit | Saves the library to a file, frees memory and closes the program |
+| `1` | Cadastrar livro | Aloca memória e armazena um novo livro mágico |
+| `2` | Deletar livro | Busca um livro pelo ID, libera sua memória e limpa o espaço |
+| `3` | Mostrar livro | Exibe todas as informações de um livro específico |
+| `4` | Editar livro | Permite editar seletivamente título, autor, datas e atributos |
+| `5` | Listar títulos | Mostra todos os IDs e títulos cadastrados |
+| `6` | Salvar e sair | Salva a biblioteca em arquivo, libera a memória e encerra o programa |
 
-Each operation is accessed through the main menu. The menu keeps running in a loop until the user selects option `6`.
+O menu permanece em execução até que o usuário selecione a opção `6`.
 
 ---
 
-## RPG Attributes
+## Atributos de RPG
 
-Besides the required book data, each book may optionally provide RPG attributes.
+Além dos dados obrigatórios do enunciado, cada livro pode possuir atributos opcionais de RPG.
 
-A book does **not** need to have all attributes. For example:
+Um livro **não precisa ter todos os atributos**. Por exemplo:
 
 ```txt
-Book A -> MAG only
-Book B -> FOR and CON
-Book C -> INT, SAB and MAG
+Livro A -> apenas MAG
+Livro B -> FOR e CON
+Livro C -> INT, SAB e MAG
 ```
 
-This is handled by storing two pieces of information for each attribute:
+Para controlar isso, cada atributo possui duas informações:
 
 ```txt
-hasAttribute -> tells if the book has that attribute
-value        -> stores the attribute value
+hasAttribute -> indica se o livro possui aquele atributo
+value        -> armazena o valor do atributo
 ```
 
-Available attributes:
+Atributos disponíveis:
 
-| Code | Attribute | Meaning |
+| Código | Atributo | Significado |
 |:---:|:---:|---|
-| `FOR` | Strength | Physical power and melee potential |
-| `DES` | Dexterity | Agility, reflexes and balance |
-| `CON` | Constitution | Health and resistance |
-| `INT` | Intelligence | Reasoning, memory and knowledge |
-| `SAB` | Wisdom | Instinct, intuition and perception |
-| `CAR` | Charisma | Presence, willpower and persuasion |
-| `MAG` | Magic | Magical potential |
+| `FOR` | Força | Poder físico e potencial de combate corpo a corpo |
+| `DES` | Destreza | Agilidade, reflexos e equilíbrio |
+| `CON` | Constituição | Saúde, resistência e vigor |
+| `INT` | Inteligência | Raciocínio, memória e conhecimento |
+| `SAB` | Sabedoria | Intuição, instinto e percepção |
+| `CAR` | Carisma | Presença, vontade e persuasão |
+| `MAG` | Magia | Potencial mágico |
 
-Each attribute value must be between `1` and `20`.
+Cada atributo pode receber um valor de `1` a `20`.
 
 ---
 
-## Project Layout
+## Estrutura do Projeto
 
 ```txt
 mini-projeto-ip-magic-library/
@@ -147,28 +147,28 @@ mini-projeto-ip-magic-library/
 └── README.md
 ```
 
-The project is separated into folders to make the code easier to understand:
+Organização das pastas:
 
-| Folder | Purpose |
+| Pasta | Função |
 |:---:|---|
-| `src/` | Source code files |
-| `include/` | Header files |
-| `data/` | Save file used by the program |
-| `docs/` | Extra documentation, test cases and video script |
+| `src/` | Arquivos-fonte `.c` |
+| `include/` | Arquivos de cabeçalho `.h` |
+| `data/` | Arquivo de salvamento utilizado pelo programa |
+| `docs/` | Documentação auxiliar, casos de teste e roteiro do vídeo |
 
 ---
 
-## Build and Run
+## Como Compilar e Executar
 
 ### Bash
 
-Compile:
+Compilar:
 
 ```bash
 bash build.sh
 ```
 
-Run:
+Executar:
 
 ```bash
 ./library data/magicLibrary.txt
@@ -176,19 +176,19 @@ Run:
 
 ### PowerShell
 
-Compile:
+Compilar:
 
 ```powershell
 .\build.ps1
 ```
 
-Run:
+Executar:
 
 ```powershell
 .\library.exe data\magicLibrary.txt
 ```
 
-If PowerShell blocks script execution:
+Caso o PowerShell bloqueie a execução do script:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build.ps1
@@ -197,69 +197,69 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 
 ---
 
-## Memory Model
+## Modelo de Memória
 
-The library is stored as an array of `100` pointers.
+A biblioteca é armazenada em um vetor de `100` ponteiros.
 
 ```c
 MagicBook *library[LIBRARY_SIZE];
 ```
 
-Each position can contain:
+Cada posição do vetor pode conter:
 
 ```txt
-NULL              -> empty slot
-MagicBook pointer -> registered book
+NULL               -> posição vazia
+MagicBook pointer  -> livro alocado dinamicamente
 ```
 
-When a book is registered, the program finds a free slot and allocates memory dynamically using `malloc`.
+Quando um livro é cadastrado, o programa procura uma posição livre e aloca memória usando `malloc`.
 
-When a book is deleted, the program uses `free` and sets the position back to `NULL`.
+Quando um livro é deletado, o programa usa `free` para liberar a memória e depois define a posição como `NULL`.
 
-This prevents memory leaks and keeps the inventory organized.
+Isso ajuda a evitar vazamentos de memória e mantém o inventário organizado.
 
 ---
 
-## Save System
+## Sistema de Salvamento
 
-The program receives the save file through the command line:
+O programa recebe o arquivo de salvamento pela linha de comando:
 
 ```bash
 ./library data/magicLibrary.txt
 ```
 
-When the user selects option `6`, the program:
+Quando o usuário escolhe a opção `6`, o programa:
 
-1. Goes through the library array.
-2. Saves every registered book.
-3. Encrypts each book title before writing it.
-4. Writes the data to `data/magicLibrary.txt`.
-5. Frees all dynamically allocated memory.
-6. Exits the program.
+1. Percorre o vetor da biblioteca.
+2. Salva todos os livros cadastrados.
+3. Criptografa o título de cada livro.
+4. Grava os dados no arquivo `data/magicLibrary.txt`.
+5. Libera toda a memória alocada dinamicamente.
+6. Encerra o programa.
 
-When the program starts again, it reads the file and rebuilds the library in memory.
+Quando o programa é aberto novamente usando o mesmo arquivo, os dados são carregados automaticamente.
 
 ---
 
-## Encryption
+## Criptografia
 
-The title of each book is encrypted before being saved.
+O título de cada livro é criptografado antes de ser salvo.
 
-The encryption uses the complement of `255`:
+A criptografia usa o complemento de `255`:
 
 ```c
 (char)(255 - (unsigned char)c)
 ```
 
-This operation is reversible. Applying it again decrypts the text.
+Essa operação é reversível. Ou seja, aplicar a mesma lógica novamente descriptografa o texto.
 
-To avoid problems with special characters in text files, the encrypted title is stored in hexadecimal format.
+Para evitar problemas com caracteres especiais em arquivos de texto, o título criptografado é salvo em formato hexadecimal.
 
 ---
 
-## Core Functions
+## Funções Principais
 
-| Module | Main functions |
+| Módulo | Funções |
 |:---:|---|
 | `library.c` | `registerBook`, `deleteBookById`, `displayBookById`, `updateBookById`, `listBookTitles` |
 | `files.c` | `saveLibraryToFile`, `loadLibraryFromFile` |
@@ -268,39 +268,39 @@ To avoid problems with special characters in text files, the encrypted title is 
 
 ---
 
-## Data Flow
+## Fluxo de Dados
 
 ```mermaid
 flowchart LR
-    A["User input"] --> B["Main menu"]
-    B --> C["Library operations"]
-    C --> D["Array of MagicBook pointers"]
-    D --> E["Dynamic memory"]
-    E --> F["Save file"]
-    F --> G["Encrypted title in hex"]
+    A["Entrada do usuario"] --> B["Menu principal"]
+    B --> C["Operacoes da biblioteca"]
+    C --> D["Vetor de ponteiros MagicBook"]
+    D --> E["Memoria dinamica"]
+    E --> F["Arquivo de save"]
+    F --> G["Titulo criptografado em hexadecimal"]
     G --> H["data/magicLibrary.txt"]
-    H --> I["Load on startup"]
+    H --> I["Carregamento ao iniciar"]
     I --> D
 ```
 
 ---
 
-## Test Guide
+## Guia de Testes
 
-Recommended tests:
+Testes recomendados:
 
-| Test | Expected result |
+| Teste | Resultado esperado |
 |:---:|---|
-| Register a book | Book appears in the list |
-| Register duplicated ID | System rejects the duplicated ID |
-| Display existing book | Full book data is shown |
-| Display missing ID | Error message is shown |
-| Update only title | Other fields remain unchanged |
-| Delete book | Book is removed and memory is freed |
-| Save and run again | Data is loaded from file |
-| Add only one RPG attribute | Only that attribute is displayed |
+| Cadastrar um livro | O livro aparece na listagem |
+| Cadastrar ID duplicado | O sistema rejeita o ID |
+| Mostrar livro existente | Todos os dados do livro são exibidos |
+| Mostrar ID inexistente | Uma mensagem de erro é exibida |
+| Editar apenas o título | Os outros campos permanecem iguais |
+| Deletar livro | O livro é removido e a memória é liberada |
+| Salvar e executar novamente | Os dados são carregados do arquivo |
+| Adicionar apenas um atributo de RPG | Apenas esse atributo é exibido |
 
-More detailed test cases are available in:
+Casos de teste mais detalhados estão disponíveis em:
 
 ```txt
 docs/test-cases.md
@@ -308,16 +308,16 @@ docs/test-cases.md
 
 ---
 
-## Team
+## Equipe
 
-| Member | Name |
+| Membro | Nome |
 |:---:|---|
-| Member 1 | Saullo Luiz de Moura |
-| Member 2 | Manuela Renovato Amaral |
+| Membro 1 | Saullo Luiz de Moura |
+| Membro 2 | Manuela Renovato Amaral |
 
 ---
 
-## Repository
+## Repositório
 
 ```txt
 https://github.com/Euosaullo/mini-projeto-ip-magic-library
@@ -328,7 +328,6 @@ https://github.com/Euosaullo/mini-projeto-ip-magic-library
 <div align="center">
 
 **Magic Library**  
-A terminal-based RPG inventory backend built with C.
+Um backend de inventário RPG em terminal desenvolvido em C.
 
-</div
-```
+</div>
