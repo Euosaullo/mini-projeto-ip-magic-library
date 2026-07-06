@@ -5,10 +5,15 @@
 #include "structs.h"
 
 void initializeLibrary (MagicBook **library);
+
 void registerBook (MagicBook **library);
+
 void deleteBookById (MagicBook **library, int id);
+
 void displayBookById (MagicBook **library, int id);
+
 void updateBookById (MagicBook **library, int id);
+
 void listBookTitles (MagicBook **library);
 
 #endif
