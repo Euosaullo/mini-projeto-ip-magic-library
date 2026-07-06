@@ -53,6 +53,7 @@ Choose an option:
 | 🧠 [Memória](#-modelo-de-memória) | Como os livros são armazenados |
 | 💾 [Salvamento](#-sistema-de-salvamento) | Persistência em arquivo |
 | 🔐 [Criptografia](#-criptografia) | Proteção dos títulos |
+| 🧩 [Funções Principais](#-funções-principais) | Principais funções implementadas no projeto |
 | 🔄 [Fluxo](#-fluxo-de-dados) | Caminho dos dados no sistema |
 | 👥 [Equipe](#-equipe) | Integrantes |
 
