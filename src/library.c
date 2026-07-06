@@ -10,6 +10,13 @@ static int readValidDate(const char *message, Date *date);
 static int readBookAttributes(BookAttributes *attributes);
 static void initializeBookAttributes(BookAttributes *attributes);
 static int readOptionalAttribute(const char *question, const char *valueMessage, int *hasAttribute, int *attributeValue);
+static int editBookAttributes(BookAttributes *attributes, int *changed);
+static int editOptionalAttribute(const char *editQuestion,
+                                 const char *presenceQuestion,
+                                 const char *valueMessage,
+                                 int *hasAttribute,
+                                 int *attributeValue,
+                                 int *changed);
 static int askYesOrNo(const char *message, int *answer);
 static int readAttributeValue(const char *message, int *value);
 static void displayBookAttributes(const BookAttributes *attributes);
@@ -177,6 +184,8 @@ void displayBookById(MagicBook **library, int id)
 void updateBookById(MagicBook **library, int id)
 {
     int index;
+    int answer;
+    int changed;
     MagicBook *book;
     char newTitle[TEXT_SIZE];
     char newAuthorName[TEXT_SIZE];
@@ -196,13 +205,90 @@ void updateBookById(MagicBook **library, int id)
 
     printf("\n--- Update Book ID %d ---\n", id);
 
-    if (!readRequiredText("New book title: ", newTitle, TEXT_SIZE) ||
-        !readRequiredText("New author name: ", newAuthorName, TEXT_SIZE) ||
-        !readValidDate("New author birth date (DD MM YYYY): ", &newAuthorBirthDate) ||
-        !readValidDate("New writing date (DD MM YYYY): ", &newWritingDate) ||
-        !readBookAttributes(&newAttributes))
+    changed = 0;
+    copyText(newTitle, book->title, TEXT_SIZE);
+    copyText(newAuthorName, book->author.name, TEXT_SIZE);
+    newAuthorBirthDate = book->author.birthDate;
+    newWritingDate = book->writingDate;
+    newAttributes = book->attributes;
+
+    if (!askYesOrNo("Update book title? (1 yes / 0 no): ", &answer))
     {
         printf("Book update canceled.\n");
+        return;
+    }
+
+    if (answer)
+    {
+        if (!readRequiredText("New book title: ", newTitle, TEXT_SIZE))
+        {
+            printf("Book update canceled.\n");
+            return;
+        }
+
+        changed = 1;
+    }
+
+    if (!askYesOrNo("Update author name? (1 yes / 0 no): ", &answer))
+    {
+        printf("Book update canceled.\n");
+        return;
+    }
+
+    if (answer)
+    {
+        if (!readRequiredText("New author name: ", newAuthorName, TEXT_SIZE))
+        {
+            printf("Book update canceled.\n");
+            return;
+        }
+
+        changed = 1;
+    }
+
+    if (!askYesOrNo("Update author birth date? (1 yes / 0 no): ", &answer))
+    {
+        printf("Book update canceled.\n");
+        return;
+    }
+
+    if (answer)
+    {
+        if (!readValidDate("New author birth date (DD MM YYYY): ", &newAuthorBirthDate))
+        {
+            printf("Book update canceled.\n");
+            return;
+        }
+
+        changed = 1;
+    }
+
+    if (!askYesOrNo("Update writing date? (1 yes / 0 no): ", &answer))
+    {
+        printf("Book update canceled.\n");
+        return;
+    }
+
+    if (answer)
+    {
+        if (!readValidDate("New writing date (DD MM YYYY): ", &newWritingDate))
+        {
+            printf("Book update canceled.\n");
+            return;
+        }
+
+        changed = 1;
+    }
+
+    if (!editBookAttributes(&newAttributes, &changed))
+    {
+        printf("Book update canceled.\n");
+        return;
+    }
+
+    if (!changed)
+    {
+        printf("No changes made.\n");
         return;
     }
 
@@ -396,6 +482,110 @@ static int readOptionalAttribute(const char *question,
     }
 
     return readAttributeValue(valueMessage, attributeValue);
+}
+
+static int editBookAttributes(BookAttributes *attributes, int *changed)
+{
+    printf("\n--- Update RPG Attributes ---\n");
+
+    if (!editOptionalAttribute("Update FOR / Strength? (1 yes / 0 no): ",
+                               "Does this book provide FOR / Strength? (1 yes / 0 no): ",
+                               "FOR value (1-20): ",
+                               &attributes->hasStrength,
+                               &attributes->strength,
+                               changed))
+    {
+        return 0;
+    }
+
+    if (!editOptionalAttribute("Update DES / Dexterity? (1 yes / 0 no): ",
+                               "Does this book provide DES / Dexterity? (1 yes / 0 no): ",
+                               "DES value (1-20): ",
+                               &attributes->hasDexterity,
+                               &attributes->dexterity,
+                               changed))
+    {
+        return 0;
+    }
+
+    if (!editOptionalAttribute("Update CON / Constitution? (1 yes / 0 no): ",
+                               "Does this book provide CON / Constitution? (1 yes / 0 no): ",
+                               "CON value (1-20): ",
+                               &attributes->hasConstitution,
+                               &attributes->constitution,
+                               changed))
+    {
+        return 0;
+    }
+
+    if (!editOptionalAttribute("Update INT / Intelligence? (1 yes / 0 no): ",
+                               "Does this book provide INT / Intelligence? (1 yes / 0 no): ",
+                               "INT value (1-20): ",
+                               &attributes->hasIntelligence,
+                               &attributes->intelligence,
+                               changed))
+    {
+        return 0;
+    }
+
+    if (!editOptionalAttribute("Update SAB / Wisdom? (1 yes / 0 no): ",
+                               "Does this book provide SAB / Wisdom? (1 yes / 0 no): ",
+                               "SAB value (1-20): ",
+                               &attributes->hasWisdom,
+                               &attributes->wisdom,
+                               changed))
+    {
+        return 0;
+    }
+
+    if (!editOptionalAttribute("Update CAR / Charisma? (1 yes / 0 no): ",
+                               "Does this book provide CAR / Charisma? (1 yes / 0 no): ",
+                               "CAR value (1-20): ",
+                               &attributes->hasCharisma,
+                               &attributes->charisma,
+                               changed))
+    {
+        return 0;
+    }
+
+    if (!editOptionalAttribute("Update MAG / Magic? (1 yes / 0 no): ",
+                               "Does this book provide MAG / Magic? (1 yes / 0 no): ",
+                               "MAG value (1-20): ",
+                               &attributes->hasMagic,
+                               &attributes->magic,
+                               changed))
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
+static int editOptionalAttribute(const char *editQuestion,
+                                 const char *presenceQuestion,
+                                 const char *valueMessage,
+                                 int *hasAttribute,
+                                 int *attributeValue,
+                                 int *changed)
+{
+    int answer;
+
+    if (!askYesOrNo(editQuestion, &answer))
+    {
+        return 0;
+    }
+
+    if (!answer)
+    {
+        return 1;
+    }
+
+    *changed = 1;
+
+    return readOptionalAttribute(presenceQuestion,
+                                 valueMessage,
+                                 hasAttribute,
+                                 attributeValue);
 }
 
 static int askYesOrNo(const char *message, int *answer)
