@@ -5,6 +5,7 @@
 #include "structs.h"
 
 void saveLibraryToFile(MagicBook **library, const char *fileName);
+
 void loadLibraryFromFile(MagicBook **library, const char *fileName);
 
 #endif
