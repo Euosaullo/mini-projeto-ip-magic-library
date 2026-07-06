@@ -61,7 +61,6 @@ Choose an option:
 ## 🧾 Visão Geral
 
 **Magic Library** é um sistema de backend em C para gerenciar uma biblioteca de livros mágicos em um inventário fictício de RPG.
-
 O projeto foi desenvolvido para aplicar conceitos fundamentais da linguagem C, como:
 
 - `struct`
@@ -72,7 +71,6 @@ O projeto foi desenvolvido para aplicar conceitos fundamentais da linguagem C, c
 - criptografia de strings
 
 Durante a execução, os livros ficam armazenados em memória. Quando o usuário escolhe salvar e sair, o programa grava os dados em um arquivo. Ao abrir o programa novamente com o mesmo arquivo, os livros são carregados de volta.
-
 Dessa forma, o sistema simula um pequeno **save game** para o inventário da biblioteca mágica.
 
 ---
@@ -95,7 +93,6 @@ O menu permanece em execução até que o usuário selecione a opção `6`.
 ## 📖 Dados do Livro
 
 Cada livro mágico possui um conjunto de informações básicas que representam sua identidade dentro da biblioteca.
-
 Esses dados são os campos principais usados pelo sistema para cadastrar, buscar, exibir, editar, deletar, salvar e carregar livros.
 
 | Campo | Tipo | Descrição |
@@ -151,8 +148,8 @@ Writing date
 ```
 
 Essas informações formam a base de cada registro. A partir delas, o sistema consegue identificar cada livro pelo `id`, exibir seus dados principais e manter o inventário salvo no arquivo.
-
 Na seção seguinte, o projeto apresenta uma expansão criativa: atributos opcionais de RPG que podem ser associados a cada livro.
+
 ---
 
 ## 🧙 Atributos de RPG
@@ -227,7 +224,6 @@ Book archetype: Arcane Spellbook
 ### 📊 Como a Média é Calculada
 
 A média é calculada usando **apenas os atributos que o livro possui**.
-
 Isso significa que atributos ausentes não entram no cálculo.
 
 Exemplo:
@@ -431,9 +427,7 @@ MagicBook pointer  -> livro alocado dinamicamente
 ```
 
 Quando um livro é cadastrado, o programa procura uma posição livre e aloca memória usando `malloc`.
-
 Quando um livro é deletado, o programa usa `free` para liberar a memória e depois define a posição como `NULL`.
-
 Isso ajuda a evitar vazamentos de memória e mantém o inventário organizado.
 
 ---
@@ -470,7 +464,6 @@ A criptografia usa o complemento de `255`:
 ```
 
 Essa operação é reversível. Ou seja, aplicar a mesma lógica novamente descriptografa o texto.
-
 Para evitar problemas com caracteres especiais em arquivos de texto, o título criptografado é salvo em formato hexadecimal.
 
 ---
