@@ -244,7 +244,9 @@ Nesse exemplo, o livro possui apenas `FOR` e `MAG`. Os demais atributos não faz
 
 ## 🏛️ Perfil de Poder do Livro
 
-Além de armazenar os atributos de RPG, o sistema também interpreta esses atributos para gerar um **perfil de poder** do livro.
+Depois de permitir que cada livro tenha atributos opcionais de RPG, o projeto adiciona uma segunda camada de interpretação: o **perfil de poder**.
+
+O perfil de poder não é um dado digitado diretamente pelo usuário. Ele é calculado automaticamente pelo sistema com base nos atributos que o livro possui.
 
 Esse perfil é exibido quando o usuário escolhe a opção:
 
@@ -252,14 +254,16 @@ Esse perfil é exibido quando o usuário escolhe a opção:
 [3] Display book
 ```
 
-A ideia é transformar os valores numéricos dos atributos em informações mais úteis para um contexto de jogo, como:
+A ideia é fazer o programa ir além de apenas armazenar dados. Ele também interpreta os atributos cadastrados e gera informações derivadas que poderiam ser usadas em um jogo real.
 
-- quantidade de atributos ativos;
-- média dos atributos;
-- nível de poder;
-- rank;
-- atributo dominante;
-- arquétipo do livro.
+O perfil de poder mostra:
+
+- quantos atributos ativos o livro possui;
+- a média dos atributos ativos;
+- o nível de poder do livro;
+- o rank textual;
+- o atributo dominante;
+- o arquétipo do livro.
 
 Exemplo de saída:
 
@@ -274,12 +278,22 @@ Dominant attribute: MAG / Magic
 Book archetype: Arcane Spellbook
 ```
 
+Nesse exemplo:
+
+- o livro possui `3` atributos ativos de um total de `7`;
+- a média desses atributos é `16.00`;
+- essa média gera o nível de poder `4/5`;
+- o rank correspondente é `Arcane`;
+- o maior atributo é `MAG / Magic`;
+- por isso, o arquétipo do livro é `Arcane Spellbook`.
+
 ---
 
 ### 📊 Como a Média é Calculada
 
-A média é calculada usando **apenas os atributos que o livro possui**.
-Isso significa que atributos ausentes não entram no cálculo.
+A média é calculada usando **apenas os atributos que o livro realmente possui**.
+
+Atributos ausentes não entram no cálculo, porque eles não representam fraqueza: apenas indicam que aquele livro não possui aquele tipo de poder.
 
 Exemplo:
 
@@ -301,13 +315,15 @@ Resultado:
 Average attribute value: 16.00
 ```
 
-Esse modelo evita que livros com poucos atributos sejam prejudicados por atributos que nem existem naquele livro.
+Esse modelo torna o sistema mais justo para livros especializados. Por exemplo, um livro que possui apenas `MAG = 20` será tratado como um livro extremamente poderoso em magia, em vez de ser prejudicado por não possuir atributos físicos ou sociais.
 
 ---
 
 ### ⭐ Níveis de Poder
 
-Depois de calcular a média, o sistema classifica o livro em um nível de poder de `0` a `5`.
+Depois de calcular a média, o sistema converte esse valor em um nível de poder de `0` a `5`.
+
+O nível `0` é reservado para livros sem atributos de RPG.
 
 | Média dos atributos | Nível | Rank |
 |:---:|:---:|:---:|
@@ -326,11 +342,15 @@ Power level: 4/5
 Rank: Arcane
 ```
 
+Essa classificação transforma os valores numéricos em uma leitura mais próxima de um sistema de jogo.
+
 ---
 
 ### 🧬 Atributo Dominante
 
 O atributo dominante é o atributo ativo com o maior valor.
+
+Ele representa a principal característica do livro.
 
 Exemplo:
 
@@ -354,22 +374,26 @@ Se dois atributos tiverem o mesmo valor, o sistema considera o primeiro encontra
 FOR -> DES -> CON -> INT -> SAB -> CAR -> MAG
 ```
 
+Isso torna o resultado previsível e evita empates indefinidos.
+
 ---
 
 ### 🧙 Arquétipos dos Livros
 
-Cada atributo dominante gera um arquétipo para o livro.
+O arquétipo é definido a partir do atributo dominante.
 
-| Atributo dominante | Arquétipo |
-|:---:|:---:|
-| `FOR / Strength` | Warrior Tome |
-| `DES / Dexterity` | Rogue Manual |
-| `CON / Constitution` | Guardian Codex |
-| `INT / Intelligence` | Scholar Grimoire |
-| `SAB / Wisdom` | Oracle Scroll |
-| `CAR / Charisma` | Royal Manuscript |
-| `MAG / Magic` | Arcane Spellbook |
-| Nenhum atributo | None |
+Ele funciona como uma classificação temática do livro, indicando que tipo de poder aquele item representa dentro do RPG.
+
+| Atributo dominante | Arquétipo | Interpretação |
+|:---:|:---:|---|
+| `FOR / Strength` | Warrior Tome | Livro ligado a força física e combate direto |
+| `DES / Dexterity` | Rogue Manual | Livro ligado a agilidade, reflexos e precisão |
+| `CON / Constitution` | Guardian Codex | Livro ligado a resistência, defesa e vigor |
+| `INT / Intelligence` | Scholar Grimoire | Livro ligado a conhecimento, lógica e estudo |
+| `SAB / Wisdom` | Oracle Scroll | Livro ligado a intuição, percepção e sabedoria |
+| `CAR / Charisma` | Royal Manuscript | Livro ligado a influência, presença e liderança |
+| `MAG / Magic` | Arcane Spellbook | Livro ligado a poder mágico |
+| Nenhum atributo | None | Livro sem perfil de poder definido |
 
 Exemplo:
 
@@ -378,7 +402,7 @@ Dominant attribute: MAG / Magic
 Book archetype: Arcane Spellbook
 ```
 
-Esse recurso aproxima o projeto de uma lógica real de RPG, porque o sistema não apenas armazena dados, mas também interpreta os atributos para gerar informações derivadas sobre o livro.
+Esse recurso aproxima o projeto de uma lógica real de backend de jogo, porque o sistema não apenas registra informações, mas também processa os dados para gerar uma classificação útil ao jogador ou a outras partes do jogo.
 
 ---
 
