@@ -50,7 +50,6 @@ Choose an option:
 | 🏛️ [Perfil de Poder](#️-perfil-de-poder-do-livro) | Classificação, rank e arquétipo dos livros |
 | 🛠️ [Tecnologias Usadas](#️-tecnologias-usadas) | Lista as ferramentas usadas no desenvolvimento |
 | 📚 [Bibliotecas Utilizadas](#-bibliotecas-utilizadas) | Apresenta as bibliotecas padrão da linguagem C |
-| 🧱 [Arquitetura](#-arquitetura) | Explica a divisão modular do projeto |
 | 🗂️ [Estrutura](#️-estrutura-do-projeto) | Organização dos arquivos |
 | ⚙️ [Compilação](#️-como-compilar-e-executar) | Bash e PowerShell |
 | 🧠 [Memória](#-modelo-de-memória) | Como os livros são armazenados |
@@ -421,7 +420,6 @@ O projeto foi desenvolvido em linguagem **C**, com foco em conceitos fundamentai
 | **C** | Linguagem principal usada para implementar toda a lógica do sistema |
 | **GCC** | Compilador usado para gerar o executável a partir dos arquivos `.c` |
 | **CMake** | Ferramenta opcional para configurar e automatizar a compilação |
-| **Make** | Permite compilar o projeto com comandos mais simples usando `Makefile` |
 | **Git** | Controla o histórico de alterações do projeto |
 | **GitHub** | Armazena o repositório remoto e facilita a entrega do projeto |
 | **Visual Studio Code** | Ambiente usado para escrever, organizar, testar e versionar o código |
