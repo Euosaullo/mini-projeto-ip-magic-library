@@ -46,6 +46,7 @@ Choose an option:
 | 🧾 [Visão Geral](#-visão-geral) | Explicação geral do projeto |
 | ✨ [Funcionalidades](#-funcionalidades) | Opções do menu |
 | 🧙 [Atributos de RPG](#-atributos-de-rpg) | Sistema de atributos mágicos |
+| 🏛️ [Perfil de Poder](#️-perfil-de-poder-do-livro) | Classificação, rank e arquétipo dos livros |
 | 🗂️ [Estrutura](#️-estrutura-do-projeto) | Organização dos arquivos |
 | ⚙️ [Compilação](#️-como-compilar-e-executar) | Bash e PowerShell |
 | 🧠 [Memória](#-modelo-de-memória) | Como os livros são armazenados |
@@ -122,6 +123,147 @@ value        -> armazena o valor do atributo
 | `MAG` | Magia | Potencial mágico |
 
 Cada atributo pode receber um valor de `1` a `20`.
+
+---
+
+## 🏛️ Perfil de Poder do Livro
+
+Além de armazenar os atributos de RPG, o sistema também interpreta esses atributos para gerar um **perfil de poder** do livro.
+
+Esse perfil é exibido quando o usuário escolhe a opção:
+
+```txt
+[3] Display book
+```
+
+A ideia é transformar os valores numéricos dos atributos em informações mais úteis para um contexto de jogo, como:
+
+- quantidade de atributos ativos;
+- média dos atributos;
+- nível de poder;
+- rank;
+- atributo dominante;
+- arquétipo do livro.
+
+Exemplo de saída:
+
+```txt
++------------------ POWER PROFILE -------------------+
+
+Active attributes: 3/7
+Average attribute value: 16.00
+Power level: 4/5
+Rank: Arcane
+Dominant attribute: MAG / Magic
+Book archetype: Arcane Spellbook
+```
+
+---
+
+### 📊 Como a Média é Calculada
+
+A média é calculada usando **apenas os atributos que o livro possui**.
+
+Isso significa que atributos ausentes não entram no cálculo.
+
+Exemplo:
+
+```txt
+FOR = 12
+INT = 17
+MAG = 19
+```
+
+O livro possui `3` atributos ativos:
+
+```txt
+(12 + 17 + 19) / 3 = 16.00
+```
+
+Resultado:
+
+```txt
+Average attribute value: 16.00
+```
+
+Esse modelo evita que livros com poucos atributos sejam prejudicados por atributos que nem existem naquele livro.
+
+---
+
+### ⭐ Níveis de Poder
+
+Depois de calcular a média, o sistema classifica o livro em um nível de poder de `0` a `5`.
+
+| Média dos atributos | Nível | Rank |
+|:---:|:---:|:---:|
+| Sem atributos | `0/5` | No power level |
+| `1` a `4` | `1/5` | Weak |
+| `5` a `8` | `2/5` | Apprentice |
+| `9` a `12` | `3/5` | Adept |
+| `13` a `16` | `4/5` | Arcane |
+| `17` a `20` | `5/5` | Legendary |
+
+Exemplo:
+
+```txt
+Average attribute value: 16.00
+Power level: 4/5
+Rank: Arcane
+```
+
+---
+
+### 🧬 Atributo Dominante
+
+O atributo dominante é o atributo ativo com o maior valor.
+
+Exemplo:
+
+```txt
+FOR = 12
+INT = 17
+MAG = 19
+```
+
+Nesse caso, o maior valor é `MAG = 19`.
+
+Resultado:
+
+```txt
+Dominant attribute: MAG / Magic
+```
+
+Se dois atributos tiverem o mesmo valor, o sistema considera o primeiro encontrado na ordem interna dos atributos:
+
+```txt
+FOR -> DES -> CON -> INT -> SAB -> CAR -> MAG
+```
+
+---
+
+### 🧙 Arquétipos dos Livros
+
+Cada atributo dominante gera um arquétipo para o livro.
+
+| Atributo dominante | Arquétipo |
+|:---:|:---:|
+| `FOR / Strength` | Warrior Tome |
+| `DES / Dexterity` | Rogue Manual |
+| `CON / Constitution` | Guardian Codex |
+| `INT / Intelligence` | Scholar Grimoire |
+| `SAB / Wisdom` | Oracle Scroll |
+| `CAR / Charisma` | Royal Manuscript |
+| `MAG / Magic` | Arcane Spellbook |
+| Nenhum atributo | None |
+
+Exemplo:
+
+```txt
+Dominant attribute: MAG / Magic
+Book archetype: Arcane Spellbook
+```
+
+Esse recurso aproxima o projeto de uma lógica real de RPG, porque o sistema não apenas armazena dados, mas também interpreta os atributos para gerar informações derivadas sobre o livro.
 
 ---
 
