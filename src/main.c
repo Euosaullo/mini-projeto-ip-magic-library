@@ -131,4 +131,3 @@ static int readMenuOption(void)
 
     return option;
 }
-
