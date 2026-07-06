@@ -3,15 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "library.h"
+#include "utils.h"
 
-static void clearInputBuffer(void);
-static void removeLineBreak(char *str);
-static void readText(const char *message, char str[], int size);
-static void readValidDate(const char *message, Date *date);
-static int isValidDate(int day, int month, int year);
-static int findFreeSlot(MagicBook **library);
-static int findBookIndexById(MagicBook **library, int id);
-static int idAlreadyExists(MagicBook **library, int id);
+static int readRequiredText(const char *message, char str[], int size);
+static int readValidDate(const char *message, Date *date);
 
 void initializeLibrary(MagicBook **library)
 {
@@ -23,14 +18,29 @@ void initializeLibrary(MagicBook **library)
     }
 }
 
+void freeLibrary(MagicBook **library)
+{
+    int i;
+
+    for (i = 0; i < LIBRARY_SIZE; i++)
+    {
+        if (library[i] != NULL)
+        {
+            free(library[i]);
+            library[i] = NULL;
+        }
+    }
+}
+
 void registerBook(MagicBook **library)
 {
     int slot;
     int id;
-    int validInput;
+    int inputResult;
+    int validId;
     MagicBook *newBook;
 
-    slot = findFreeSlot(library);
+    slot = findFreeLibrarySlot(library);
 
     if (slot == -1)
     {
@@ -38,7 +48,7 @@ void registerBook(MagicBook **library)
         return;
     }
 
-    newBook = (MagicBook *) malloc(sizeof(MagicBook));
+    newBook = malloc(sizeof *newBook);
 
     if (newBook == NULL)
     {
@@ -48,30 +58,57 @@ void registerBook(MagicBook **library)
 
     printf("\n--- Register New Book ---\n");
 
-    do
+    validId = 0;
+
+    while (!validId)
     {
         printf("Book ID: ");
-        validInput = scanf("%d", &id);
-        clearInputBuffer();
 
-        if (validInput != 1)
+        inputResult = scanf("%d", &id);
+
+        if (inputResult == EOF)
+        {
+            clearInputBuffer();
+            free(newBook);
+            printf("Book registration canceled.\n");
+            return;
+        }
+
+        if (inputResult != 1)
         {
             printf("Invalid ID. Try again.\n");
+            clearInputBuffer();
+            continue;
         }
-        else if (idAlreadyExists(library, id))
+
+        clearInputBuffer();
+
+        if (id <= 0)
+        {
+            printf("The ID must be a positive number.\n");
+        }
+        else if (bookIdExists(library, id))
         {
             printf("This ID already exists. Try another one.\n");
         }
+        else
+        {
+            validId = 1;
+        }
 
-    } while (validInput != 1 || idAlreadyExists(library, id));
+    }
 
     newBook->id = id;
 
-    readText("Book title: ", newBook->title, TEXT_SIZE);
-    readText("Author name: ", newBook->author.name, TEXT_SIZE);
-
-    readValidDate("Author birth date (DD MM YYYY): ", &newBook->author.birthDate);
-    readValidDate("Writing date (DD MM YYYY): ", &newBook->writingDate);
+    if (!readRequiredText("Book title: ", newBook->title, TEXT_SIZE) ||
+        !readRequiredText("Author name: ", newBook->author.name, TEXT_SIZE) ||
+        !readValidDate("Author birth date (DD MM YYYY): ", &newBook->author.birthDate) ||
+        !readValidDate("Writing date (DD MM YYYY): ", &newBook->writingDate))
+    {
+        free(newBook);
+        printf("Book registration canceled.\n");
+        return;
+    }
 
     library[slot] = newBook;
 
@@ -131,6 +168,10 @@ void updateBookById(MagicBook **library, int id)
 {
     int index;
     MagicBook *book;
+    char newTitle[TEXT_SIZE];
+    char newAuthorName[TEXT_SIZE];
+    Date newAuthorBirthDate;
+    Date newWritingDate;
 
     index = findBookIndexById(library, id);
 
@@ -144,11 +185,19 @@ void updateBookById(MagicBook **library, int id)
 
     printf("\n--- Update Book ID %d ---\n", id);
 
-    readText("New book title: ", book->title, TEXT_SIZE);
-    readText("New author name: ", book->author.name, TEXT_SIZE);
+    if (!readRequiredText("New book title: ", newTitle, TEXT_SIZE) ||
+        !readRequiredText("New author name: ", newAuthorName, TEXT_SIZE) ||
+        !readValidDate("New author birth date (DD MM YYYY): ", &newAuthorBirthDate) ||
+        !readValidDate("New writing date (DD MM YYYY): ", &newWritingDate))
+    {
+        printf("Book update canceled.\n");
+        return;
+    }
 
-    readValidDate("New author birth date (DD MM YYYY): ", &book->author.birthDate);
-    readValidDate("New writing date (DD MM YYYY): ", &book->writingDate);
+    copyText(book->title, newTitle, TEXT_SIZE);
+    copyText(book->author.name, newAuthorName, TEXT_SIZE);
+    book->author.birthDate = newAuthorBirthDate;
+    book->writingDate = newWritingDate;
 
     printf("Book updated successfully.\n");
 }
@@ -177,63 +226,26 @@ void listBookTitles(MagicBook **library)
     }
 }
 
-void freeLibrary(MagicBook **library)
+static int readRequiredText(const char *message, char str[], int size)
 {
-    int i;
-
-    for (i = 0; i < LIBRARY_SIZE; i++)
-    {
-        if (library[i] != NULL)
-        {
-            free(library[i]);
-            library[i] = NULL;
-        }
-    }
-}
-
-static void clearInputBuffer(void)
-{
-    int character;
-
     do
     {
-        character = getchar();
-    } while (character != '\n' && character != EOF);
-}
-
-static void removeLineBreak(char *str)
-{
-    int i;
-
-    i = 0;
-
-    while (str[i] != '\0')
-    {
-        if (str[i] == '\n')
+        if (!readLine(message, str, size))
         {
-            str[i] = '\0';
-            return;
+            return 0;
         }
 
-        i++;
-    }
+        if (str[0] == '\0')
+        {
+            printf("This field cannot be empty.\n");
+        }
+
+    } while (str[0] == '\0');
+
+    return 1;
 }
 
-static void readText(const char *message, char str[], int size)
-{
-    printf("%s", message);
-
-    if (fgets(str, size, stdin) != NULL)
-    {
-        removeLineBreak(str);
-    }
-    else
-    {
-        str[0] = '\0';
-    }
-}
-
-static void readValidDate(const char *message, Date *date)
+static int readValidDate(const char *message, Date *date)
 {
     int validInput;
 
@@ -242,6 +254,13 @@ static void readValidDate(const char *message, Date *date)
         printf("%s", message);
 
         validInput = scanf("%d %d %d", &date->day, &date->month, &date->year);
+
+        if (validInput == EOF)
+        {
+            clearInputBuffer();
+            return 0;
+        }
+
         clearInputBuffer();
 
         if (validInput != 3 || !isValidDate(date->day, date->month, date->year))
@@ -250,45 +269,11 @@ static void readValidDate(const char *message, Date *date)
         }
 
     } while (validInput != 3 || !isValidDate(date->day, date->month, date->year));
-}
-
-static int isValidDate(int day, int month, int year)
-{
-    int daysInMonth[13];
-
-    daysInMonth[0] = 0;
-    daysInMonth[1] = 31;
-    daysInMonth[2] = 28;
-    daysInMonth[3] = 31;
-    daysInMonth[4] = 30;
-    daysInMonth[5] = 31;
-    daysInMonth[6] = 30;
-    daysInMonth[7] = 31;
-    daysInMonth[8] = 31;
-    daysInMonth[9] = 30;
-    daysInMonth[10] = 31;
-    daysInMonth[11] = 30;
-    daysInMonth[12] = 31;
-
-    if (year < 1 || month < 1 || month > 12 || day < 1)
-    {
-        return 0;
-    }
-
-    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
-    {
-        daysInMonth[2] = 29;
-    }
-
-    if (day > daysInMonth[month])
-    {
-        return 0;
-    }
 
     return 1;
 }
 
-static int findFreeSlot(MagicBook **library)
+int findFreeLibrarySlot(MagicBook **library)
 {
     int i;
 
@@ -303,7 +288,7 @@ static int findFreeSlot(MagicBook **library)
     return -1;
 }
 
-static int findBookIndexById(MagicBook **library, int id)
+int findBookIndexById(MagicBook **library, int id)
 {
     int i;
 
@@ -318,7 +303,7 @@ static int findBookIndexById(MagicBook **library, int id)
     return -1;
 }
 
-static int idAlreadyExists(MagicBook **library, int id)
+int bookIdExists(MagicBook **library, int id)
 {
     if (findBookIndexById(library, id) != -1)
     {
