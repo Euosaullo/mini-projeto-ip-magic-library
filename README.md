@@ -408,6 +408,60 @@ Book archetype: Arcane Spellbook
 
 Esse recurso aproxima o projeto de uma lógica real de backend de jogo, porque o sistema não apenas registra informações, mas também processa os dados para gerar uma classificação útil ao jogador ou a outras partes do jogo.
 
+
+---
+## 🛠️ Tecnologias Usadas
+
+O projeto foi desenvolvido em linguagem **C**, com foco em conceitos fundamentais de programação estruturada, uso de `structs`, ponteiros, alocação dinâmica, manipulação de arquivos e modularização.
+
+<div align="center">
+
+| Tecnologia | Função no Projeto |
+|:---:|---|
+| **C** | Linguagem principal usada para implementar toda a lógica do sistema |
+| **GCC** | Compilador usado para gerar o executável a partir dos arquivos `.c` |
+| **CMake** | Ferramenta opcional para configurar e automatizar a compilação |
+| **Make** | Permite compilar o projeto com comandos mais simples usando `Makefile` |
+| **Git** | Controla o histórico de alterações do projeto |
+| **GitHub** | Armazena o repositório remoto e facilita a entrega do projeto |
+| **Visual Studio Code** | Ambiente usado para escrever, organizar, testar e versionar o código |
+
+</div>
+
+Essas ferramentas tornam o projeto mais organizado e fácil de executar em diferentes ambientes. Além disso, o uso de scripts de build permite que a compilação seja feita tanto no **Bash** quanto no **PowerShell**, sem precisar digitar manualmente todos os arquivos fonte no terminal.
+
+---
+
+## 📚 Bibliotecas Utilizadas
+
+O projeto utiliza apenas bibliotecas padrão da linguagem C, sem dependências externas. Isso torna o sistema mais simples de compilar e mais compatível com diferentes ambientes.
+
+<div align="center">
+
+| Biblioteca | Finalidade |
+|:---:|---|
+| `<stdio.h>` | Entrada e saída de dados no terminal e manipulação de arquivos |
+| `<stdlib.h>` | Alocação e liberação dinâmica de memória com `malloc` e `free` |
+| `<string.h>` | Apoio à manipulação de strings |
+
+</div>
+
+Além das bibliotecas padrão, o projeto também possui arquivos de cabeçalho próprios, responsáveis por organizar as declarações das funções e estruturas.
+
+<div align="center">
+
+| Header do Projeto | Responsabilidade |
+|:---:|---|
+| `structs.h` | Define as estruturas `Date`, `Author`, `BookAttributes` e `MagicBook` |
+| `library.h` | Declara as funções principais de gerenciamento da biblioteca |
+| `files.h` | Declara as funções de salvamento e carregamento |
+| `encryption.h` | Declara as funções de criptografia e descriptografia |
+| `utils.h` | Declara funções auxiliares reutilizadas pelo sistema |
+
+</div>
+
+Essa separação melhora a organização do código e facilita a manutenção, pois cada módulo possui uma responsabilidade clara.
+
 ---
 
 ## 🗂️ Estrutura do Projeto
