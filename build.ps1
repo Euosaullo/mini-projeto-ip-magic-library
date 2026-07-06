@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$outputFile = "biblioteca.exe"
+$outputFile = "library.exe"
 
 gcc -Wall -Wextra -Wpedantic -std=c11 `
     main.c `
