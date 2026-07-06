@@ -4,6 +4,8 @@
 
 #define LIBRARY_SIZE 100
 #define TEXT_SIZE 100
+#define ATTRIBUTE_MIN 1
+#define ATTRIBUTE_MAX 20
 
 typedef struct
 {
@@ -20,10 +22,35 @@ typedef struct
 
 typedef struct
 {
+    int hasStrength;
+    int strength;
+
+    int hasDexterity;
+    int dexterity;
+
+    int hasConstitution;
+    int constitution;
+
+    int hasIntelligence;
+    int intelligence;
+
+    int hasWisdom;
+    int wisdom;
+
+    int hasCharisma;
+    int charisma;
+
+    int hasMagic;
+    int magic;
+} BookAttributes;
+
+typedef struct
+{
     int id;
     char title[TEXT_SIZE];
     Author author;
     Date writingDate;
+    BookAttributes attributes;
 } MagicBook;
 
 #endif
