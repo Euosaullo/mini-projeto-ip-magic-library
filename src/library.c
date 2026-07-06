@@ -7,6 +7,13 @@
 
 static int readRequiredText(const char *message, char str[], int size);
 static int readValidDate(const char *message, Date *date);
+static int readBookAttributes(BookAttributes *attributes);
+static void initializeBookAttributes(BookAttributes *attributes);
+static int readOptionalAttribute(const char *question, const char *valueMessage, int *hasAttribute, int *attributeValue);
+static int askYesOrNo(const char *message, int *answer);
+static int readAttributeValue(const char *message, int *value);
+static void displayBookAttributes(const BookAttributes *attributes);
+static int hasAnyBookAttribute(const BookAttributes *attributes);
 
 void initializeLibrary(MagicBook **library)
 {
@@ -103,7 +110,8 @@ void registerBook(MagicBook **library)
     if (!readRequiredText("Book title: ", newBook->title, TEXT_SIZE) ||
         !readRequiredText("Author name: ", newBook->author.name, TEXT_SIZE) ||
         !readValidDate("Author birth date (DD MM YYYY): ", &newBook->author.birthDate) ||
-        !readValidDate("Writing date (DD MM YYYY): ", &newBook->writingDate))
+        !readValidDate("Writing date (DD MM YYYY): ", &newBook->writingDate) ||
+        !readBookAttributes(&newBook->attributes))
     {
         free(newBook);
         printf("Book registration canceled.\n");
@@ -162,6 +170,8 @@ void displayBookById(MagicBook **library, int id)
            book->writingDate.day,
            book->writingDate.month,
            book->writingDate.year);
+
+    displayBookAttributes(&book->attributes);
 }
 
 void updateBookById(MagicBook **library, int id)
@@ -172,6 +182,7 @@ void updateBookById(MagicBook **library, int id)
     char newAuthorName[TEXT_SIZE];
     Date newAuthorBirthDate;
     Date newWritingDate;
+    BookAttributes newAttributes;
 
     index = findBookIndexById(library, id);
 
@@ -188,7 +199,8 @@ void updateBookById(MagicBook **library, int id)
     if (!readRequiredText("New book title: ", newTitle, TEXT_SIZE) ||
         !readRequiredText("New author name: ", newAuthorName, TEXT_SIZE) ||
         !readValidDate("New author birth date (DD MM YYYY): ", &newAuthorBirthDate) ||
-        !readValidDate("New writing date (DD MM YYYY): ", &newWritingDate))
+        !readValidDate("New writing date (DD MM YYYY): ", &newWritingDate) ||
+        !readBookAttributes(&newAttributes))
     {
         printf("Book update canceled.\n");
         return;
@@ -198,6 +210,7 @@ void updateBookById(MagicBook **library, int id)
     copyText(book->author.name, newAuthorName, TEXT_SIZE);
     book->author.birthDate = newAuthorBirthDate;
     book->writingDate = newWritingDate;
+    book->attributes = newAttributes;
 
     printf("Book updated successfully.\n");
 }
@@ -271,6 +284,241 @@ static int readValidDate(const char *message, Date *date)
     } while (validInput != 3 || !isValidDate(date->day, date->month, date->year));
 
     return 1;
+}
+
+static int readBookAttributes(BookAttributes *attributes)
+{
+    initializeBookAttributes(attributes);
+
+    printf("\n--- Optional RPG Attributes ---\n");
+
+    if (!readOptionalAttribute("Does this book provide FOR / Strength? (1 yes / 0 no): ",
+                               "FOR value (1-20): ",
+                               &attributes->hasStrength,
+                               &attributes->strength))
+    {
+        return 0;
+    }
+
+    if (!readOptionalAttribute("Does this book provide DES / Dexterity? (1 yes / 0 no): ",
+                               "DES value (1-20): ",
+                               &attributes->hasDexterity,
+                               &attributes->dexterity))
+    {
+        return 0;
+    }
+
+    if (!readOptionalAttribute("Does this book provide CON / Constitution? (1 yes / 0 no): ",
+                               "CON value (1-20): ",
+                               &attributes->hasConstitution,
+                               &attributes->constitution))
+    {
+        return 0;
+    }
+
+    if (!readOptionalAttribute("Does this book provide INT / Intelligence? (1 yes / 0 no): ",
+                               "INT value (1-20): ",
+                               &attributes->hasIntelligence,
+                               &attributes->intelligence))
+    {
+        return 0;
+    }
+
+    if (!readOptionalAttribute("Does this book provide SAB / Wisdom? (1 yes / 0 no): ",
+                               "SAB value (1-20): ",
+                               &attributes->hasWisdom,
+                               &attributes->wisdom))
+    {
+        return 0;
+    }
+
+    if (!readOptionalAttribute("Does this book provide CAR / Charisma? (1 yes / 0 no): ",
+                               "CAR value (1-20): ",
+                               &attributes->hasCharisma,
+                               &attributes->charisma))
+    {
+        return 0;
+    }
+
+    if (!readOptionalAttribute("Does this book provide MAG / Magic? (1 yes / 0 no): ",
+                               "MAG value (1-20): ",
+                               &attributes->hasMagic,
+                               &attributes->magic))
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
+static void initializeBookAttributes(BookAttributes *attributes)
+{
+    attributes->hasStrength = 0;
+    attributes->strength = 0;
+
+    attributes->hasDexterity = 0;
+    attributes->dexterity = 0;
+
+    attributes->hasConstitution = 0;
+    attributes->constitution = 0;
+
+    attributes->hasIntelligence = 0;
+    attributes->intelligence = 0;
+
+    attributes->hasWisdom = 0;
+    attributes->wisdom = 0;
+
+    attributes->hasCharisma = 0;
+    attributes->charisma = 0;
+
+    attributes->hasMagic = 0;
+    attributes->magic = 0;
+}
+
+static int readOptionalAttribute(const char *question,
+                                 const char *valueMessage,
+                                 int *hasAttribute,
+                                 int *attributeValue)
+{
+    int answer;
+
+    if (!askYesOrNo(question, &answer))
+    {
+        return 0;
+    }
+
+    *hasAttribute = answer;
+
+    if (!answer)
+    {
+        *attributeValue = 0;
+        return 1;
+    }
+
+    return readAttributeValue(valueMessage, attributeValue);
+}
+
+static int askYesOrNo(const char *message, int *answer)
+{
+    int inputResult;
+    int value;
+
+    while (1)
+    {
+        printf("%s", message);
+
+        inputResult = scanf("%d", &value);
+
+        if (inputResult == EOF)
+        {
+            clearInputBuffer();
+            return 0;
+        }
+
+        clearInputBuffer();
+
+        if (inputResult != 1 || (value != 0 && value != 1))
+        {
+            printf("Type 1 for yes or 0 for no.\n");
+            continue;
+        }
+
+        *answer = value;
+        return 1;
+    }
+}
+
+static int readAttributeValue(const char *message, int *value)
+{
+    int inputResult;
+    int typedValue;
+
+    while (1)
+    {
+        printf("%s", message);
+
+        inputResult = scanf("%d", &typedValue);
+
+        if (inputResult == EOF)
+        {
+            clearInputBuffer();
+            return 0;
+        }
+
+        clearInputBuffer();
+
+        if (inputResult != 1)
+        {
+            printf("Invalid value. Try again.\n");
+            continue;
+        }
+
+        if (typedValue < ATTRIBUTE_MIN || typedValue > ATTRIBUTE_MAX)
+        {
+            printf("Value must be between %d and %d.\n", ATTRIBUTE_MIN, ATTRIBUTE_MAX);
+            continue;
+        }
+
+        *value = typedValue;
+        return 1;
+    }
+}
+
+static void displayBookAttributes(const BookAttributes *attributes)
+{
+    printf("\n--- RPG Attributes ---\n");
+
+    if (!hasAnyBookAttribute(attributes))
+    {
+        printf("No RPG attributes.\n");
+        return;
+    }
+
+    if (attributes->hasStrength)
+    {
+        printf("FOR / Strength: %d\n", attributes->strength);
+    }
+
+    if (attributes->hasDexterity)
+    {
+        printf("DES / Dexterity: %d\n", attributes->dexterity);
+    }
+
+    if (attributes->hasConstitution)
+    {
+        printf("CON / Constitution: %d\n", attributes->constitution);
+    }
+
+    if (attributes->hasIntelligence)
+    {
+        printf("INT / Intelligence: %d\n", attributes->intelligence);
+    }
+
+    if (attributes->hasWisdom)
+    {
+        printf("SAB / Wisdom: %d\n", attributes->wisdom);
+    }
+
+    if (attributes->hasCharisma)
+    {
+        printf("CAR / Charisma: %d\n", attributes->charisma);
+    }
+
+    if (attributes->hasMagic)
+    {
+        printf("MAG / Magic: %d\n", attributes->magic);
+    }
+}
+
+static int hasAnyBookAttribute(const BookAttributes *attributes)
+{
+    return attributes->hasStrength ||
+           attributes->hasDexterity ||
+           attributes->hasConstitution ||
+           attributes->hasIntelligence ||
+           attributes->hasWisdom ||
+           attributes->hasCharisma ||
+           attributes->hasMagic;
 }
 
 int findFreeLibrarySlot(MagicBook **library)
