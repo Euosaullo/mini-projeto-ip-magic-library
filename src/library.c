@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "library.h"
 #include "utils.h"
 
@@ -11,11 +12,12 @@ static int readBookAttributes(BookAttributes *attributes);
 static void initializeBookAttributes(BookAttributes *attributes);
 static int readOptionalAttribute(const char *question, const char *valueMessage, int *hasAttribute, int *attributeValue);
 static int editBookAttributes(BookAttributes *attributes, int *changed);
-static int editOptionalAttribute(const char *editQuestion, const char *presenceQuestion, const char *valueMessage, int *hasAttribute,int *attributeValue, int *changed);
+static int editOptionalAttribute(const char *editQuestion, const char *presenceQuestion, const char *valueMessage, int *hasAttribute, int *attributeValue, int *changed);
 static int askYesOrNo(const char *message, int *answer);
 static int readAttributeValue(const char *message, int *value);
 static void displayBookAttributes(const BookAttributes *attributes);
 static int hasAnyBookAttribute(const BookAttributes *attributes);
+static void printSectionHeader(const char *title);
 
 void initializeLibrary(MagicBook **library)
 {
@@ -65,7 +67,7 @@ void registerBook(MagicBook **library)
         return;
     }
 
-    printf("\n--- Register New Book ---\n");
+    printSectionHeader("REGISTER BOOK");
 
     validId = 0;
 
@@ -122,7 +124,7 @@ void registerBook(MagicBook **library)
 
     library[slot] = newBook;
 
-    printf("Book registered successfully.\n");
+    printf("\nBook registered successfully.\n");
 }
 
 void deleteBookById(MagicBook **library, int id)
@@ -140,7 +142,7 @@ void deleteBookById(MagicBook **library, int id)
     free(library[index]);
     library[index] = NULL;
 
-    printf("Book deleted successfully.\n");
+    printf("\nBook deleted successfully.\n");
 }
 
 void displayBookById(MagicBook **library, int id)
@@ -158,7 +160,7 @@ void displayBookById(MagicBook **library, int id)
 
     book = library[index];
 
-    printf("\n--- Book Details ---\n");
+    printSectionHeader("BOOK DETAILS");
     printf("ID: %d\n", book->id);
     printf("Title: %s\n", book->title);
     printf("Author: %s\n", book->author.name);
@@ -198,7 +200,7 @@ void updateBookById(MagicBook **library, int id)
 
     book = library[index];
 
-    printf("\n--- Update Book ID %d ---\n", id);
+    printf("\nID selecionado: %d\n\n", id);
 
     changed = 0;
     copyText(newTitle, book->title, TEXT_SIZE);
@@ -293,7 +295,7 @@ void updateBookById(MagicBook **library, int id)
     book->writingDate = newWritingDate;
     book->attributes = newAttributes;
 
-    printf("Book updated successfully.\n");
+    printf("\nBook updated successfully.\n");
 }
 
 void listBookTitles(MagicBook **library)
@@ -303,13 +305,13 @@ void listBookTitles(MagicBook **library)
 
     count = 0;
 
-    printf("\n--- Book Titles ---\n");
+    printSectionHeader("REGISTERED TITLES");
 
     for (i = 0; i < LIBRARY_SIZE; i++)
     {
         if (library[i] != NULL)
         {
-            printf("ID: %d | Title: %s\n", library[i]->id, library[i]->title);
+            printf("[ID %03d] %s\n", library[i]->id, library[i]->title);
             count++;
         }
     }
@@ -371,7 +373,7 @@ static int readBookAttributes(BookAttributes *attributes)
 {
     initializeBookAttributes(attributes);
 
-    printf("\n--- Optional RPG Attributes ---\n");
+    printSectionHeader("OPTIONAL RPG ATTRIBUTES");
 
     if (!readOptionalAttribute("Does this book provide FOR / Strength? (1 yes / 0 no): ",
                                "FOR value (1-20): ",
@@ -481,7 +483,7 @@ static int readOptionalAttribute(const char *question,
 
 static int editBookAttributes(BookAttributes *attributes, int *changed)
 {
-    printf("\n--- Update RPG Attributes ---\n");
+    printSectionHeader("UPDATE RPG ATTRIBUTES");
 
     if (!editOptionalAttribute("Update FOR / Strength? (1 yes / 0 no): ",
                                "Does this book provide FOR / Strength? (1 yes / 0 no): ",
@@ -651,11 +653,11 @@ static int readAttributeValue(const char *message, int *value)
 
 static void displayBookAttributes(const BookAttributes *attributes)
 {
-    printf("\n--- RPG Attributes ---\n");
+    printSectionHeader("RPG ATTRIBUTES");
 
     if (!hasAnyBookAttribute(attributes))
     {
-        printf("No RPG attributes.\n");
+        printf("No RPG attributes registered for this book.\n");
         return;
     }
 
@@ -704,6 +706,45 @@ static int hasAnyBookAttribute(const BookAttributes *attributes)
            attributes->hasWisdom ||
            attributes->hasCharisma ||
            attributes->hasMagic;
+}
+
+static void printSectionHeader(const char *title)
+{
+    int i;
+    int insideWidth;
+    int titleLength;
+    int labelWidth;
+    int leftPadding;
+    int rightPadding;
+
+    insideWidth = 52;
+    titleLength = (int) strlen(title);
+    labelWidth = titleLength + 2;
+
+    if (labelWidth > insideWidth)
+    {
+        printf("\n+ %s +\n\n", title);
+        return;
+    }
+
+    leftPadding = (insideWidth - labelWidth) / 2;
+    rightPadding = insideWidth - labelWidth - leftPadding;
+
+    printf("\n+");
+
+    for (i = 0; i < leftPadding; i++)
+    {
+        printf("-");
+    }
+
+    printf(" %s ", title);
+
+    for (i = 0; i < rightPadding; i++)
+    {
+        printf("-");
+    }
+
+    printf("+\n\n");
 }
 
 int findFreeLibrarySlot(MagicBook **library)
