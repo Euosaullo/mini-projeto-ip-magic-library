@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📚 THE SPELLBOUND LIBRARY
+# 📚 THE MAGIC LIBRARY
 
 ### Mini Projeto 03 — Backend de Inventário de Livros Mágicos em C
 
