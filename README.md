@@ -271,16 +271,28 @@ Para evitar problemas com caracteres especiais em arquivos de texto, o título c
 ## Fluxo de Dados
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["Entrada do usuario"] --> B["Menu principal"]
-    B --> C["Operacoes da biblioteca"]
-    C --> D["Vetor de ponteiros MagicBook"]
-    D --> E["Memoria dinamica"]
-    E --> F["Arquivo de save"]
-    F --> G["Titulo criptografado em hexadecimal"]
-    G --> H["data/magicLibrary.txt"]
-    H --> I["Carregamento ao iniciar"]
-    I --> D
+    B --> C["Escolha da operacao"]
+    C --> D["Operacoes da biblioteca"]
+    D --> E["Vetor de ponteiros MagicBook"]
+    E --> F["Memoria dinamica"]
+
+    F --> G{"Usuario escolheu salvar e sair?"}
+
+    G -- "Nao" --> B
+    G -- "Sim" --> H["Percorre os livros cadastrados"]
+    H --> I["Criptografa o titulo"]
+    I --> J["Converte titulo criptografado para hexadecimal"]
+    J --> K["Grava dados em data/magicLibrary.txt"]
+    K --> L["Libera memoria alocada"]
+    L --> M["Encerra o programa"]
+
+    K --> N["Proxima execucao"]
+    N --> O["Le arquivo de salvamento"]
+    O --> P["Descriptografa os titulos"]
+    P --> Q["Reconstrói a biblioteca em memoria"]
+    Q --> B
 ```
 
 ---
