@@ -2,7 +2,7 @@
 
 # 📚 THE SPELLBOUND LIBRARY
 
-### Backend de Inventário de Livros Mágicos em C
+### Mini Projeto 03 — Backend de Inventário de Livros Mágicos em C
 
 <p>
   Um sistema em terminal para gerenciar livros mágicos, atributos de RPG,
@@ -61,7 +61,7 @@ Choose an option:
 
 ## 🧾 Visão Geral
 
-**Magic Library** é um sistema de backend em C para gerenciar uma biblioteca de livros mágicos em um inventário fictício de RPG.
+**The Spellbound Library** é um sistema de backend em C para gerenciar uma biblioteca de livros mágicos em um inventário fictício de RPG.
 O projeto foi desenvolvido para aplicar conceitos fundamentais da linguagem C, como:
 
 - `struct`
