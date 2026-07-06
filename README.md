@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📚 MAGIC LIBRARY
+# 📚 THE SPELLBOUND LIBRARY
 
 ### Backend de Inventário de Livros Mágicos em C
 
