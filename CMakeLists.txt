@@ -33,7 +33,7 @@ target_include_directories(
 set_target_properties(
     MagicLibrary
     PROPERTIES
-    OUTPUT_NAME biblioteca
+    OUTPUT_NAME library
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
