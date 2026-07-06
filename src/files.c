@@ -4,18 +4,22 @@
 #include <stdlib.h>
 #include "files.h"
 #include "encryption.h"
+#include "library.h"
 #include "structs.h"
+#include "utils.h"
 
-static void copyText(char destination[], const char source[]);
-static void removeLineBreak(char str[]);
-static void discardRestOfLine(FILE *file);
-static int findFreeSlot(MagicBook **library);
+#define ENCRYPTED_TITLE_LINE_SIZE (TEXT_SIZE * 2 + 2)
+
+static void writeEncryptedTitle(FILE *file, const char title[]);
+static int readEncryptedTitle(FILE *file, char title[]);
+static int decodeEncryptedTitle(const char source[], char destination[]);
+static int hexDigitValue(char character);
+static int isLoadedBookValid(MagicBook **library, const MagicBook *book);
 
 void saveLibraryToFile(MagicBook **library, const char *fileName)
 {
     FILE *file;
     int i;
-    char encryptedTitle[TEXT_SIZE];
     MagicBook *book;
 
     file = fopen(fileName, "w");
@@ -32,11 +36,8 @@ void saveLibraryToFile(MagicBook **library, const char *fileName)
         {
             book = library[i];
 
-            copyText(encryptedTitle, book->title);
-            encryptString(encryptedTitle);
-
             fprintf(file, "%d\n", book->id);
-            fprintf(file, "%s\n", encryptedTitle);
+            writeEncryptedTitle(file, book->title);
             fprintf(file, "%s\n", book->author.name);
 
             fprintf(file, "%d %d %d\n",
@@ -72,14 +73,14 @@ void loadLibraryFromFile(MagicBook **library, const char *fileName)
 
     while (1)
     {
-        slot = findFreeSlot(library);
+        slot = findFreeLibrarySlot(library);
 
         if (slot == -1)
         {
             break;
         }
 
-        newBook = (MagicBook *) malloc(sizeof(MagicBook));
+        newBook = malloc(sizeof *newBook);
 
         if (newBook == NULL)
         {
@@ -97,14 +98,11 @@ void loadLibraryFromFile(MagicBook **library, const char *fileName)
 
         discardRestOfLine(file);
 
-        if (fgets(newBook->title, TEXT_SIZE, file) == NULL)
+        if (!readEncryptedTitle(file, newBook->title))
         {
             free(newBook);
             break;
         }
-
-        removeLineBreak(newBook->title);
-        decryptString(newBook->title);
 
         if (fgets(newBook->author.name, TEXT_SIZE, file) == NULL)
         {
@@ -112,7 +110,10 @@ void loadLibraryFromFile(MagicBook **library, const char *fileName)
             break;
         }
 
-        removeLineBreak(newBook->author.name);
+        if (!removeLineBreak(newBook->author.name))
+        {
+            discardRestOfLine(file);
+        }
 
         result = fscanf(file, "%d %d %d",
                         &newBook->author.birthDate.day,
@@ -140,66 +141,134 @@ void loadLibraryFromFile(MagicBook **library, const char *fileName)
 
         discardRestOfLine(file);
 
+        if (!isLoadedBookValid(library, newBook))
+        {
+            printf("Skipping invalid or duplicated book record with ID %d.\n", newBook->id);
+            free(newBook);
+            continue;
+        }
+
         library[slot] = newBook;
     }
 
     fclose(file);
 }
 
-static void copyText(char destination[], const char source[])
+static void writeEncryptedTitle(FILE *file, const char title[])
 {
+    char encryptedTitle[TEXT_SIZE];
     int i;
 
-    i = 0;
+    copyText(encryptedTitle, title, TEXT_SIZE);
+    encryptString(encryptedTitle);
 
-    while (source[i] != '\0' && i < TEXT_SIZE - 1)
+    for (i = 0; encryptedTitle[i] != '\0'; i++)
     {
-        destination[i] = source[i];
-        i++;
+        fprintf(file, "%02X", (unsigned char) encryptedTitle[i]);
     }
 
-    destination[i] = '\0';
+    fprintf(file, "\n");
 }
 
-static void removeLineBreak(char str[])
+static int readEncryptedTitle(FILE *file, char title[])
+{
+    char encryptedTitleLine[ENCRYPTED_TITLE_LINE_SIZE];
+
+    if (fgets(encryptedTitleLine, ENCRYPTED_TITLE_LINE_SIZE, file) == NULL)
+    {
+        return 0;
+    }
+
+    if (!removeLineBreak(encryptedTitleLine))
+    {
+        discardRestOfLine(file);
+        return 0;
+    }
+
+    return decodeEncryptedTitle(encryptedTitleLine, title);
+}
+
+static int decodeEncryptedTitle(const char source[], char destination[])
 {
     int i;
+    int outputIndex;
+    int high;
+    int low;
 
     i = 0;
+    outputIndex = 0;
 
-    while (str[i] != '\0')
+    while (source[i] != '\0')
     {
-        if (str[i] == '\n')
+        if (source[i + 1] == '\0' || outputIndex >= TEXT_SIZE - 1)
         {
-            str[i] = '\0';
-            return;
+            return 0;
         }
 
-        i++;
+        high = hexDigitValue(source[i]);
+        low = hexDigitValue(source[i + 1]);
+
+        if (high == -1 || low == -1)
+        {
+            return 0;
+        }
+
+        destination[outputIndex] = (char) ((high * 16) + low);
+        outputIndex++;
+        i += 2;
     }
+
+    destination[outputIndex] = '\0';
+    decryptString(destination);
+
+    return 1;
 }
 
-static void discardRestOfLine(FILE *file)
+static int hexDigitValue(char character)
 {
-    int character;
-
-    do
+    if (character >= '0' && character <= '9')
     {
-        character = fgetc(file);
-    } while (character != '\n' && character != EOF);
-}
+        return character - '0';
+    }
 
-static int findFreeSlot(MagicBook **library)
-{
-    int i;
-
-    for (i = 0; i < LIBRARY_SIZE; i++)
+    if (character >= 'A' && character <= 'F')
     {
-        if (library[i] == NULL)
-        {
-            return i;
-        }
+        return character - 'A' + 10;
+    }
+
+    if (character >= 'a' && character <= 'f')
+    {
+        return character - 'a' + 10;
     }
 
     return -1;
+}
+
+static int isLoadedBookValid(MagicBook **library, const MagicBook *book)
+{
+    if (book->id <= 0 || bookIdExists(library, book->id))
+    {
+        return 0;
+    }
+
+    if (book->title[0] == '\0' || book->author.name[0] == '\0')
+    {
+        return 0;
+    }
+
+    if (!isValidDate(book->author.birthDate.day,
+                     book->author.birthDate.month,
+                     book->author.birthDate.year))
+    {
+        return 0;
+    }
+
+    if (!isValidDate(book->writingDate.day,
+                     book->writingDate.month,
+                     book->writingDate.year))
+    {
+        return 0;
+    }
+
+    return 1;
 }
