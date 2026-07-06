@@ -48,6 +48,9 @@ Choose an option:
 | 📖 [Dados do Livro](#-dados-do-livro) | Campos obrigatórios de cada livro |
 | 🧙 [Atributos de RPG](#-atributos-de-rpg) | Sistema de atributos mágicos |
 | 🏛️ [Perfil de Poder](#️-perfil-de-poder-do-livro) | Classificação, rank e arquétipo dos livros |
+| 🛠️ [Tecnologias Usadas](#️-tecnologias-usadas) | Lista as ferramentas usadas no desenvolvimento |
+| 📚 [Bibliotecas Utilizadas](#-bibliotecas-utilizadas) | Apresenta as bibliotecas padrão da linguagem C |
+| 🧱 [Arquitetura](#-arquitetura) | Explica a divisão modular do projeto |
 | 🗂️ [Estrutura](#️-estrutura-do-projeto) | Organização dos arquivos |
 | ⚙️ [Compilação](#️-como-compilar-e-executar) | Bash e PowerShell |
 | 🧠 [Memória](#-modelo-de-memória) | Como os livros são armazenados |
