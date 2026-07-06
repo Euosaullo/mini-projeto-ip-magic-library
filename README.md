@@ -154,9 +154,10 @@ Na seção seguinte, o projeto apresenta uma expansão criativa: atributos opcio
 
 ## 🧙 Atributos de RPG
 
-Além dos dados obrigatórios do enunciado, cada livro pode possuir atributos opcionais de RPG.
+Depois dos dados básicos do livro, o projeto adiciona uma camada extra inspirada em sistemas de RPG: os **atributos opcionais**.
+Esses atributos representam os tipos de poder, influência ou vantagem que um livro mágico pode conceder dentro de um jogo fictício.
 
-Um livro **não precisa ter todos os atributos**. Por exemplo:
+Um ponto importante da implementação é que um livro **não precisa possuir todos os atributos**, o que permite criar livros com identidades diferentes:
 
 ```txt
 Livro A -> apenas MAG
@@ -164,12 +165,52 @@ Livro B -> FOR e CON
 Livro C -> INT, SAB e MAG
 ```
 
-Para controlar isso, cada atributo possui duas informações:
+Para permitir essa flexibilidade, cada atributo foi modelado com duas informações:
 
 ```txt
 hasAttribute -> indica se o livro possui aquele atributo
 value        -> armazena o valor do atributo
 ```
+
+Na prática, isso significa que o sistema diferencia:
+
+```txt
+O livro nao possui MAG
+```
+
+de:
+
+```txt
+O livro possui MAG com valor 10
+```
+
+Essa diferença é importante porque usar apenas `0` como valor poderia gerar ambiguidade: o valor `0` significaria ausência do atributo ou um atributo muito fraco?  
+Por isso, o projeto usa uma flag `has...` para indicar presença e outro campo para armazenar o valor.
+
+Exemplo simplificado da ideia:
+
+```c
+int hasMagic;
+int magic;
+```
+
+Se o livro possui magia:
+
+```c
+hasMagic = 1;
+magic = 18;
+```
+
+Se o livro não possui magia:
+
+```c
+hasMagic = 0;
+magic = 0;
+```
+
+Esse mesmo padrão é aplicado para todos os atributos.
+
+---
 
 ### Tabela de Atributos
 
@@ -184,6 +225,20 @@ value        -> armazena o valor do atributo
 | `MAG` | Magia | Potencial mágico |
 
 Cada atributo pode receber um valor de `1` a `20`.
+
+Durante o cadastro ou edição de um livro, o programa pergunta atributo por atributo se aquele livro possui ou não aquele poder. Caso o usuário responda `1`, o sistema solicita o valor do atributo. Caso responda `0`, o atributo fica desativado para aquele livro.
+
+Exemplo de interação:
+
+```txt
+Does this book provide FOR / Strength? (1 yes / 0 no): 1
+FOR value (1-20): 12
+Does this book provide DES / Dexterity? (1 yes / 0 no): 0
+Does this book provide MAG / Magic? (1 yes / 0 no): 1
+MAG value (1-20): 19
+```
+
+Nesse exemplo, o livro possui apenas `FOR` e `MAG`. Os demais atributos não fazem parte daquele livro.
 
 ---
 
