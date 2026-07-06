@@ -45,6 +45,7 @@ Choose an option:
 |:---:|---|
 | 🧾 [Visão Geral](#-visão-geral) | Explicação geral do projeto |
 | ✨ [Funcionalidades](#-funcionalidades) | Opções do menu |
+| 📖 [Dados do Livro](#-dados-do-livro) | Campos obrigatórios de cada livro |
 | 🧙 [Atributos de RPG](#-atributos-de-rpg) | Sistema de atributos mágicos |
 | 🏛️ [Perfil de Poder](#️-perfil-de-poder-do-livro) | Classificação, rank e arquétipo dos livros |
 | 🗂️ [Estrutura](#️-estrutura-do-projeto) | Organização dos arquivos |
@@ -88,6 +89,74 @@ Dessa forma, o sistema simula um pequeno **save game** para o inventário da bib
 | `6` | 💾 Salvar e sair | Salva os dados, libera memória e encerra o programa |
 
 O menu permanece em execução até que o usuário selecione a opção `6`.
+
+---
+
+## 📖 Dados do Livro
+
+Antes dos atributos extras de RPG, cada livro possui os dados obrigatórios definidos pelo enunciado do projeto.
+
+Esses dados representam a estrutura básica de um livro mágico dentro da biblioteca.
+
+| Campo | Tipo | Descrição |
+|:---:|:---:|---|
+| `id` | `int` | Identificador único do livro, usado para buscar, editar e deletar |
+| `title` | `char[100]` | Título do livro mágico |
+| `author.name` | `char[100]` | Nome do autor do livro |
+| `author.birthDate` | `Date` | Data de nascimento do autor |
+| `writingDate` | `Date` | Data em que o livro foi escrito |
+
+A estrutura `Date` armazena datas no formato:
+
+```c
+typedef struct
+{
+    int day;
+    int month;
+    int year;
+} Date;
+```
+
+A estrutura `Author` armazena o nome do autor e sua data de nascimento:
+
+```c
+typedef struct
+{
+    char name[TEXT_SIZE];
+    Date birthDate;
+} Author;
+```
+
+A estrutura principal `MagicBook` reúne os dados obrigatórios do livro e os atributos extras adicionados pelo grupo:
+
+```c
+typedef struct
+{
+    int id;
+    char title[TEXT_SIZE];
+    Author author;
+    Date writingDate;
+    BookAttributes attributes;
+} MagicBook;
+```
+
+Na prática, ao cadastrar um livro, o usuário informa:
+
+```txt
+Book ID
+Book title
+Author name
+Author birth date
+Writing date
+```
+
+Depois disso, o sistema pergunta quais atributos de RPG aquele livro possui.
+
+Essa separação deixa claro que:
+
+- os dados do livro são a base obrigatória do projeto;
+- os atributos de RPG são uma expansão criativa adicionada ao sistema;
+- todas as operações principais usam o `id` para localizar o livro.
 
 ---
 
