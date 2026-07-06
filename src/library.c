@@ -12,25 +12,12 @@ static int readBookAttributes(BookAttributes *attributes);
 static void initializeBookAttributes(BookAttributes *attributes);
 static int readOptionalAttribute(const char *question, const char *valueMessage, int *hasAttribute, int *attributeValue);
 static int editBookAttributes(BookAttributes *attributes, int *changed);
-static int editOptionalAttribute(const char *editQuestion,
-                                 const char *presenceQuestion,
-                                 const char *valueMessage,
-                                 int *hasAttribute,
-                                 int *attributeValue,
-                                 int *changed);
+static int editOptionalAttribute(const char *editQuestion, const char *presenceQuestion, const char *valueMessage, int *hasAttribute, int *attributeValue, int *changed);
 static int askYesOrNo(const char *message, int *answer);
 static int readAttributeValue(const char *message, int *value);
 static void displayBookAttributes(const BookAttributes *attributes);
 static void displayBookPowerProfile(const BookAttributes *attributes);
-static void includeAttributeInPowerProfile(int hasAttribute,
-                                           int value,
-                                           const char *attributeName,
-                                           const char *archetype,
-                                           int *activeCount,
-                                           int *totalValue,
-                                           int *dominantValue,
-                                           const char **dominantAttribute,
-                                           const char **bookArchetype);
+static void includeAttributeInPowerProfile(int hasAttribute, int value, const char *attributeName, const char *archetype, int *activeCount, int *totalValue, int *dominantValue, const char **dominantAttribute, const char **bookArchetype);
 static int calculatePowerLevel(double average);
 static const char *getPowerRank(int powerLevel);
 static int hasAnyBookAttribute(const BookAttributes *attributes);
