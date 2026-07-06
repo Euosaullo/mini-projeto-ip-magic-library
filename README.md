@@ -94,19 +94,19 @@ O menu permanece em execução até que o usuário selecione a opção `6`.
 
 ## 📖 Dados do Livro
 
-Antes dos atributos extras de RPG, cada livro possui os dados obrigatórios definidos pelo enunciado do projeto.
+Cada livro mágico possui um conjunto de informações básicas que representam sua identidade dentro da biblioteca.
 
-Esses dados representam a estrutura básica de um livro mágico dentro da biblioteca.
+Esses dados são os campos principais usados pelo sistema para cadastrar, buscar, exibir, editar, deletar, salvar e carregar livros.
 
 | Campo | Tipo | Descrição |
 |:---:|:---:|---|
-| `id` | `int` | Identificador único do livro, usado para buscar, editar e deletar |
+| `id` | `int` | Identificador único do livro, usado para localizar o registro nas operações de busca, edição e deleção |
 | `title` | `char[100]` | Título do livro mágico |
 | `author.name` | `char[100]` | Nome do autor do livro |
 | `author.birthDate` | `Date` | Data de nascimento do autor |
 | `writingDate` | `Date` | Data em que o livro foi escrito |
 
-A estrutura `Date` armazena datas no formato:
+A estrutura `Date` armazena datas no formato de dia, mês e ano:
 
 ```c
 typedef struct
@@ -117,7 +117,7 @@ typedef struct
 } Date;
 ```
 
-A estrutura `Author` armazena o nome do autor e sua data de nascimento:
+A estrutura `Author` agrupa os dados referentes ao autor:
 
 ```c
 typedef struct
@@ -127,7 +127,7 @@ typedef struct
 } Author;
 ```
 
-A estrutura principal `MagicBook` reúne os dados obrigatórios do livro e os atributos extras adicionados pelo grupo:
+A estrutura principal `MagicBook` representa um livro dentro da biblioteca:
 
 ```c
 typedef struct
@@ -150,14 +150,9 @@ Author birth date
 Writing date
 ```
 
-Depois disso, o sistema pergunta quais atributos de RPG aquele livro possui.
+Essas informações formam a base de cada registro. A partir delas, o sistema consegue identificar cada livro pelo `id`, exibir seus dados principais e manter o inventário salvo no arquivo.
 
-Essa separação deixa claro que:
-
-- os dados do livro são a base obrigatória do projeto;
-- os atributos de RPG são uma expansão criativa adicionada ao sistema;
-- todas as operações principais usam o `id` para localizar o livro.
-
+Na seção seguinte, o projeto apresenta uma expansão criativa: atributos opcionais de RPG que podem ser associados a cada livro.
 ---
 
 ## 🧙 Atributos de RPG
