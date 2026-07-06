@@ -556,6 +556,31 @@ Para evitar problemas com caracteres especiais em arquivos de texto, o título c
 | `encryption.c` | `encryptString`, `decryptString` |
 | `utils.c` | `clearInputBuffer`, `readLine`, `copyText`, `isValidDate` |
 
+#### `library.c`
+
+- `registerBook`: cadastra um novo livro, alocando memória dinamicamente e armazenando o ponteiro em uma posição livre da biblioteca.
+- `deleteBookById`: busca um livro pelo ID, libera a memória ocupada por ele e marca sua posição como vazia.
+- `displayBookById`: exibe todas as informações de um livro, incluindo dados básicos, atributos de RPG e perfil de poder.
+- `updateBookById`: permite editar seletivamente os campos de um livro já cadastrado.
+- `listBookTitles`: lista os IDs e títulos dos livros atualmente cadastrados.
+
+#### `files.c`
+
+- `saveLibraryToFile`: percorre a biblioteca e salva os livros cadastrados no arquivo informado.
+- `loadLibraryFromFile`: lê o arquivo de dados, recria os livros em memória e os adiciona ao vetor de ponteiros.
+
+#### `encryption.c`
+
+- `encryptString`: criptografa uma string usando o complemento de `255`.
+- `decryptString`: descriptografa uma string aplicando a mesma lógica da criptografia.
+
+#### `utils.c`
+
+- `clearInputBuffer`: limpa caracteres restantes da entrada padrão.
+- `readLine`: lê uma linha de texto com segurança.
+- `copyText`: copia uma string respeitando o tamanho máximo do destino.
+- `isValidDate`: verifica se uma data informada é válida.
+
 ---
 
 ## 🔄 Fluxo de Dados
