@@ -1,19 +1,24 @@
 <div align="center">
 
-# MAGIC LIBRARY
+# 📚 MAGIC LIBRARY
 
 ### Backend de Inventário de Livros Mágicos em C
 
-`structs` · `ponteiros` · `alocação dinâmica` · `arquivos` · `criptografia`
+<p>
+  Um sistema em terminal para gerenciar livros mágicos, atributos de RPG,
+  persistência em arquivo e criptografia de títulos.
+</p>
 
-<img src="https://img.shields.io/badge/linguagem-C-00599C?style=for-the-badge">
-<img src="https://img.shields.io/badge/compilador-GCC-orange?style=for-the-badge">
-<img src="https://img.shields.io/badge/interface-terminal-222222?style=for-the-badge">
-<img src="https://img.shields.io/badge/status-concluido-brightgreen?style=for-the-badge">
+<img src="https://img.shields.io/badge/Linguagem-C-00599C?style=for-the-badge&logo=c&logoColor=white">
+<img src="https://img.shields.io/badge/Compilador-GCC-F34B7D?style=for-the-badge">
+<img src="https://img.shields.io/badge/Interface-Terminal-222222?style=for-the-badge&logo=gnubash&logoColor=white">
+<img src="https://img.shields.io/badge/Status-Concluido-2EAF4A?style=for-the-badge">
 
 </div>
 
 ---
+
+## 🖥️ Prévia do Menu
 
 ```txt
 +====================================================+
@@ -34,23 +39,24 @@ Choose an option:
 
 ---
 
-## Navegação Rápida
+## 🧭 Navegação
 
-| Seção | Descrição |
+| Seção | Conteúdo |
 |:---:|---|
-| [Visão Geral](#visão-geral) | Explicação geral do projeto |
-| [Funcionalidades](#funcionalidades) | Opções do menu e operações do sistema |
-| [Atributos de RPG](#atributos-de-rpg) | Atributos mágicos opcionais dos livros |
-| [Estrutura do Projeto](#estrutura-do-projeto) | Organização das pastas e arquivos |
-| [Como Compilar e Executar](#como-compilar-e-executar) | Comandos para Bash e PowerShell |
-| [Modelo de Memória](#modelo-de-memória) | Como os livros são armazenados em memória |
-| [Sistema de Salvamento](#sistema-de-salvamento) | Como funciona a persistência em arquivo |
-| [Criptografia](#criptografia) | Como os títulos são protegidos |
-| [Equipe](#equipe) | Integrantes do projeto |
+| 🧾 [Visão Geral](#-visão-geral) | Explicação geral do projeto |
+| ✨ [Funcionalidades](#-funcionalidades) | Opções do menu |
+| 🧙 [Atributos de RPG](#-atributos-de-rpg) | Sistema de atributos mágicos |
+| 🗂️ [Estrutura](#️-estrutura-do-projeto) | Organização dos arquivos |
+| ⚙️ [Compilação](#️-como-compilar-e-executar) | Bash e PowerShell |
+| 🧠 [Memória](#-modelo-de-memória) | Como os livros são armazenados |
+| 💾 [Salvamento](#-sistema-de-salvamento) | Persistência em arquivo |
+| 🔐 [Criptografia](#-criptografia) | Proteção dos títulos |
+| 🔄 [Fluxo](#-fluxo-de-dados) | Caminho dos dados no sistema |
+| 👥 [Equipe](#-equipe) | Integrantes |
 
 ---
 
-## Visão Geral
+## 🧾 Visão Geral
 
 **Magic Library** é um sistema de backend em C para gerenciar uma biblioteca de livros mágicos em um inventário fictício de RPG.
 
@@ -69,22 +75,22 @@ Dessa forma, o sistema simula um pequeno **save game** para o inventário da bib
 
 ---
 
-## Funcionalidades
+## ✨ Funcionalidades
 
-| Opção | Ação | O que faz |
+| Opção | Ação | Descrição |
 |:---:|:---:|---|
-| `1` | Cadastrar livro | Aloca memória e armazena um novo livro mágico |
-| `2` | Deletar livro | Busca um livro pelo ID, libera sua memória e limpa o espaço |
-| `3` | Mostrar livro | Exibe todas as informações de um livro específico |
-| `4` | Editar livro | Permite editar seletivamente título, autor, datas e atributos |
-| `5` | Listar títulos | Mostra todos os IDs e títulos cadastrados |
-| `6` | Salvar e sair | Salva a biblioteca em arquivo, libera a memória e encerra o programa |
+| `1` | 📘 Cadastrar livro | Aloca memória e registra um novo livro mágico |
+| `2` | 🗑️ Deletar livro | Remove um livro pelo ID e libera a memória |
+| `3` | 🔎 Mostrar livro | Exibe todos os dados de um livro específico |
+| `4` | ✏️ Editar livro | Permite editar seletivamente título, autor, datas e atributos |
+| `5` | 📋 Listar títulos | Mostra todos os IDs e títulos cadastrados |
+| `6` | 💾 Salvar e sair | Salva os dados, libera memória e encerra o programa |
 
 O menu permanece em execução até que o usuário selecione a opção `6`.
 
 ---
 
-## Atributos de RPG
+## 🧙 Atributos de RPG
 
 Além dos dados obrigatórios do enunciado, cada livro pode possuir atributos opcionais de RPG.
 
@@ -103,7 +109,7 @@ hasAttribute -> indica se o livro possui aquele atributo
 value        -> armazena o valor do atributo
 ```
 
-Atributos disponíveis:
+### Tabela de Atributos
 
 | Código | Atributo | Significado |
 |:---:|:---:|---|
@@ -119,7 +125,7 @@ Cada atributo pode receber um valor de `1` a `20`.
 
 ---
 
-## Estrutura do Projeto
+## 🗂️ Estrutura do Projeto
 
 ```txt
 mini-projeto-ip-magic-library/
@@ -147,7 +153,7 @@ mini-projeto-ip-magic-library/
 └── README.md
 ```
 
-Organização das pastas:
+### Organização das Pastas
 
 | Pasta | Função |
 |:---:|---|
@@ -158,31 +164,35 @@ Organização das pastas:
 
 ---
 
-## Como Compilar e Executar
+## ⚙️ Como Compilar e Executar
 
-### Bash
+<details open>
+<summary><strong>🐚 Bash</strong></summary>
 
-Compilar:
+### Compilar
 
 ```bash
 bash build.sh
 ```
 
-Executar:
+### Executar
 
 ```bash
 ./library data/magicLibrary.txt
 ```
 
-### PowerShell
+</details>
 
-Compilar:
+<details open>
+<summary><strong>🪟 PowerShell</strong></summary>
+
+### Compilar
 
 ```powershell
 .\build.ps1
 ```
 
-Executar:
+### Executar
 
 ```powershell
 .\library.exe data\magicLibrary.txt
@@ -195,9 +205,11 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 .\library.exe data\magicLibrary.txt
 ```
 
+</details>
+
 ---
 
-## Modelo de Memória
+## 🧠 Modelo de Memória
 
 A biblioteca é armazenada em um vetor de `100` ponteiros.
 
@@ -220,7 +232,7 @@ Isso ajuda a evitar vazamentos de memória e mantém o inventário organizado.
 
 ---
 
-## Sistema de Salvamento
+## 💾 Sistema de Salvamento
 
 O programa recebe o arquivo de salvamento pela linha de comando:
 
@@ -241,7 +253,7 @@ Quando o programa é aberto novamente usando o mesmo arquivo, os dados são carr
 
 ---
 
-## Criptografia
+## 🔐 Criptografia
 
 O título de cada livro é criptografado antes de ser salvo.
 
@@ -257,7 +269,7 @@ Para evitar problemas com caracteres especiais em arquivos de texto, o título c
 
 ---
 
-## Funções Principais
+## 🧩 Funções Principais
 
 | Módulo | Funções |
 |:---:|---|
@@ -268,7 +280,7 @@ Para evitar problemas com caracteres especiais em arquivos de texto, o título c
 
 ---
 
-## Fluxo de Dados
+## 🔄 Fluxo de Dados
 
 ```mermaid
 flowchart TD
@@ -278,26 +290,26 @@ flowchart TD
     D --> E["Vetor de ponteiros MagicBook"]
     E --> F["Memoria dinamica"]
 
-    F --> G{"Usuario escolheu salvar e sair?"}
+    F --> G{"Salvar e sair?"}
 
     G -- "Nao" --> B
     G -- "Sim" --> H["Percorre os livros cadastrados"]
     H --> I["Criptografa o titulo"]
-    I --> J["Converte titulo criptografado para hexadecimal"]
-    J --> K["Grava dados em data/magicLibrary.txt"]
-    K --> L["Libera memoria alocada"]
+    I --> J["Converte para hexadecimal"]
+    J --> K["Grava em data/magicLibrary.txt"]
+    K --> L["Libera memoria"]
     L --> M["Encerra o programa"]
 
     K --> N["Proxima execucao"]
-    N --> O["Le arquivo de salvamento"]
+    N --> O["Le arquivo de save"]
     O --> P["Descriptografa os titulos"]
-    P --> Q["Reconstrói a biblioteca em memoria"]
+    P --> Q["Reconstroi a biblioteca"]
     Q --> B
 ```
 
 ---
 
-## Guia de Testes
+## 🧪 Guia de Testes
 
 Testes recomendados:
 
@@ -320,7 +332,7 @@ docs/test-cases.md
 
 ---
 
-## Equipe
+## 👥 Equipe
 
 | Membro | Nome |
 |:---:|---|
@@ -329,7 +341,7 @@ docs/test-cases.md
 
 ---
 
-## Repositório
+## 🔗 Repositório
 
 ```txt
 https://github.com/Euosaullo/mini-projeto-ip-magic-library
@@ -339,7 +351,8 @@ https://github.com/Euosaullo/mini-projeto-ip-magic-library
 
 <div align="center">
 
-**Magic Library**  
+### 📚 Magic Library
+
 Um backend de inventário RPG em terminal desenvolvido em C.
 
 </div>
