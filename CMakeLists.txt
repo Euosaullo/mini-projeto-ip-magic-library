@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 
 project(
-    BibliotecaMagica
+    MagicLibrary
     VERSION 1.0
-    DESCRIPTION "Backend do jogo Biblioteca Magica"
+    DESCRIPTION "Magic Library game backend"
     LANGUAGES C
 )
 
@@ -20,18 +20,18 @@ set(SOURCES
 )
 
 add_executable(
-    BibliotecaMagica
+    MagicLibrary
     ${SOURCES}
 )
 
 target_include_directories(
-    BibliotecaMagica
+    MagicLibrary
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 set_target_properties(
-    BibliotecaMagica
+    MagicLibrary
     PROPERTIES
     OUTPUT_NAME biblioteca
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -39,13 +39,13 @@ set_target_properties(
 
 if(MSVC)
     target_compile_options(
-        BibliotecaMagica
+        MagicLibrary
         PRIVATE
         /W4
     )
 else()
     target_compile_options(
-        BibliotecaMagica
+        MagicLibrary
         PRIVATE
         -Wall
         -Wextra
