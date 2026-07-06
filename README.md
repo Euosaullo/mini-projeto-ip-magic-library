@@ -37,52 +37,76 @@ Choose an option:
 ## Quick Navigation
 
 | Section | Description |
-|---|---|
-| [Overview](#overview) | What the project does |
-| [Features](#features) | Main system operations |
-| [RPG Attributes](#rpg-attributes) | Optional book stats |
-| [Project Layout](#project-layout) | Folder organization |
+|:---:|---|
+| [Overview](#overview) | General explanation of the project |
+| [Features](#features) | Menu options and system operations |
+| [RPG Attributes](#rpg-attributes) | Optional magical attributes for each book |
+| [Project Layout](#project-layout) | Folder and file organization |
 | [Build and Run](#build-and-run) | Bash and PowerShell commands |
-| [Data Flow](#data-flow) | How memory and files interact |
-| [Core Functions](#core-functions) | Main implemented functions |
-| [Team](#team) | Group members |
+| [Memory Model](#memory-model) | How books are stored in memory |
+| [Save System](#save-system) | How file persistence works |
+| [Encryption](#encryption) | How book titles are protected |
+| [Team](#team) | Project members |
 
 ---
 
 ## Overview
 
-**Magic Library** is a backend system written in C for managing a magical book inventory in an RPG game.
+**Magic Library** is a terminal-based backend system written in C for managing magical books in a fictional RPG inventory.
 
-Each book is stored dynamically in memory and can be saved to or loaded from a file. The project follows the required structure from the assignment while also adding optional RPG attributes to make the system more creative and game-like.
+The project follows the requirements of Mini Project 03, using:
 
-The program uses a fixed inventory with `100` slots. Each slot stores either:
+- `struct`
+- pointers
+- dynamic memory allocation
+- array of pointers
+- file handling
+- encrypted data persistence
 
-```txt
-NULL                  -> empty slot
-MagicBook pointer     -> dynamically allocated book
-```
+The program works like a small game backend. While it is running, the books are stored in memory. When the user chooses to save and exit, the system writes the current library state to a file. When the program is opened again with the same file, the saved books are loaded back into memory.
+
+This means the project simulates a simple **save game system**.
 
 ---
 
 ## Features
 
-| Option | Action | What it does |
-|---:|---|---|
-| `1` | Register book | Allocates and stores a new magical book |
-| `2` | Delete book | Finds a book by ID and frees its memory |
-| `3` | Display book | Shows all information about one book |
-| `4` | Update book | Allows selective editing of book fields |
-| `5` | List book titles | Displays all registered book IDs and titles |
-| `6` | Save and exit | Writes the library to disk and closes the program |
+| Menu Option | Feature | What it does |
+|:---:|:---:|---|
+| `1` | Register book | Allocates memory for a new book and stores it in the library |
+| `2` | Delete book | Searches a book by ID, frees its memory and clears its slot |
+| `3` | Display book | Shows all information about a specific book |
+| `4` | Update book | Allows selective editing of title, author, dates and RPG attributes |
+| `5` | List book titles | Shows all registered book IDs and titles |
+| `6` | Save and exit | Saves the library to a file, frees memory and closes the program |
+
+Each operation is accessed through the main menu. The menu keeps running in a loop until the user selects option `6`.
 
 ---
 
 ## RPG Attributes
 
-Books may optionally provide RPG attributes. A book does **not** need to have all attributes.
+Besides the required book data, each book may optionally provide RPG attributes.
+
+A book does **not** need to have all attributes. For example:
+
+```txt
+Book A -> MAG only
+Book B -> FOR and CON
+Book C -> INT, SAB and MAG
+```
+
+This is handled by storing two pieces of information for each attribute:
+
+```txt
+hasAttribute -> tells if the book has that attribute
+value        -> stores the attribute value
+```
+
+Available attributes:
 
 | Code | Attribute | Meaning |
-|---|---|---|
+|:---:|:---:|---|
 | `FOR` | Strength | Physical power and melee potential |
 | `DES` | Dexterity | Agility, reflexes and balance |
 | `CON` | Constitution | Health and resistance |
@@ -91,15 +115,7 @@ Books may optionally provide RPG attributes. A book does **not** need to have al
 | `CAR` | Charisma | Presence, willpower and persuasion |
 | `MAG` | Magic | Magical potential |
 
-Each attribute has a value from `1` to `20`.
-
-Example:
-
-```txt
-FOR / Strength: 12
-INT / Intelligence: 17
-MAG / Magic: 19
-```
+Each attribute value must be between `1` and `20`.
 
 ---
 
@@ -131,21 +147,44 @@ mini-projeto-ip-magic-library/
 └── README.md
 ```
 
+The project is separated into folders to make the code easier to understand:
+
+| Folder | Purpose |
+|:---:|---|
+| `src/` | Source code files |
+| `include/` | Header files |
+| `data/` | Save file used by the program |
+| `docs/` | Extra documentation, test cases and video script |
+
 ---
 
 ## Build and Run
 
 ### Bash
 
+Compile:
+
 ```bash
 bash build.sh
+```
+
+Run:
+
+```bash
 ./library data/magicLibrary.txt
 ```
 
 ### PowerShell
 
+Compile:
+
 ```powershell
 .\build.ps1
+```
+
+Run:
+
+```powershell
 .\library.exe data\magicLibrary.txt
 ```
 
@@ -158,74 +197,70 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 
 ---
 
-## Data Flow
+## Memory Model
 
-```mermaid
-flowchart LR
-    A["User input"] --> B["Menu"]
-    B --> C["Library operations"]
-    C --> D["MagicBook pointers"]
-    D --> E["Memory inventory: 100 slots"]
-    E --> F["Save file"]
-    F --> G["Encrypted title in hex"]
-    G --> H["data/magicLibrary.txt"]
-    H --> I["Load on startup"]
-    I --> E
+The library is stored as an array of `100` pointers.
+
+```c
+MagicBook *library[LIBRARY_SIZE];
 ```
+
+Each position can contain:
+
+```txt
+NULL              -> empty slot
+MagicBook pointer -> registered book
+```
+
+When a book is registered, the program finds a free slot and allocates memory dynamically using `malloc`.
+
+When a book is deleted, the program uses `free` and sets the position back to `NULL`.
+
+This prevents memory leaks and keeps the inventory organized.
 
 ---
 
-## Core Data Structures
+## Save System
 
-<details>
-<summary><strong>Date</strong></summary>
+The program receives the save file through the command line:
 
-```c
-typedef struct
-{
-    int day;
-    int month;
-    int year;
-} Date;
+```bash
+./library data/magicLibrary.txt
 ```
 
-</details>
+When the user selects option `6`, the program:
 
-<details>
-<summary><strong>Author</strong></summary>
+1. Goes through the library array.
+2. Saves every registered book.
+3. Encrypts each book title before writing it.
+4. Writes the data to `data/magicLibrary.txt`.
+5. Frees all dynamically allocated memory.
+6. Exits the program.
+
+When the program starts again, it reads the file and rebuilds the library in memory.
+
+---
+
+## Encryption
+
+The title of each book is encrypted before being saved.
+
+The encryption uses the complement of `255`:
 
 ```c
-typedef struct
-{
-    char name[TEXT_SIZE];
-    Date birthDate;
-} Author;
+(char)(255 - (unsigned char)c)
 ```
 
-</details>
+This operation is reversible. Applying it again decrypts the text.
 
-<details>
-<summary><strong>MagicBook</strong></summary>
-
-```c
-typedef struct
-{
-    int id;
-    char title[TEXT_SIZE];
-    Author author;
-    Date writingDate;
-    BookAttributes attributes;
-} MagicBook;
-```
-
-</details>
+To avoid problems with special characters in text files, the encrypted title is stored in hexadecimal format.
 
 ---
 
 ## Core Functions
 
-| Module | Functions |
-|---|---|
+| Module | Main functions |
+|:---:|---|
 | `library.c` | `registerBook`, `deleteBookById`, `displayBookById`, `updateBookById`, `listBookTitles` |
 | `files.c` | `saveLibraryToFile`, `loadLibraryFromFile` |
 | `encryption.c` | `encryptString`, `decryptString` |
@@ -233,35 +268,20 @@ typedef struct
 
 ---
 
-## Save System
+## Data Flow
 
-The program receives the save file as a command-line argument:
-
-```bash
-./library data/magicLibrary.txt
+```mermaid
+flowchart LR
+    A["User input"] --> B["Main menu"]
+    B --> C["Library operations"]
+    C --> D["Array of MagicBook pointers"]
+    D --> E["Dynamic memory"]
+    E --> F["Save file"]
+    F --> G["Encrypted title in hex"]
+    G --> H["data/magicLibrary.txt"]
+    H --> I["Load on startup"]
+    I --> D
 ```
-
-When the user chooses option `6`, the program:
-
-1. Encrypts each book title.
-2. Converts the encrypted title to hexadecimal.
-3. Saves all registered books to `data/magicLibrary.txt`.
-4. Frees all allocated memory.
-5. Exits the program.
-
----
-
-## Encryption
-
-The title encryption uses the complement of `255`.
-
-```c
-(char)(255 - (unsigned char)c)
-```
-
-The same operation is used for encryption and decryption.
-
-To keep the save file readable and stable, encrypted titles are stored in hexadecimal format.
 
 ---
 
@@ -270,13 +290,13 @@ To keep the save file readable and stable, encrypted titles are stored in hexade
 Recommended tests:
 
 | Test | Expected result |
-|---|---|
+|:---:|---|
 | Register a book | Book appears in the list |
-| Register duplicated ID | System rejects the ID |
+| Register duplicated ID | System rejects the duplicated ID |
 | Display existing book | Full book data is shown |
 | Display missing ID | Error message is shown |
 | Update only title | Other fields remain unchanged |
-| Delete book | Slot becomes empty |
+| Delete book | Book is removed and memory is freed |
 | Save and run again | Data is loaded from file |
 | Add only one RPG attribute | Only that attribute is displayed |
 
@@ -290,12 +310,10 @@ docs/test-cases.md
 
 ## Team
 
-| Member | Role |
-|---|---|
-| Member 1 | Development |
-| Member 2 | Development |
-| Member 3 | Development |
-| Member 4 | Development |
+| Member | Name |
+|:---:|---|
+| Member 1 | Saullo Luiz de Moura |
+| Member 2 | Manuela Renovato Amaral |
 
 ---
 
@@ -312,4 +330,5 @@ https://github.com/Euosaullo/mini-projeto-ip-magic-library
 **Magic Library**  
 A terminal-based RPG inventory backend built with C.
 
-</div>
+</div
+```
