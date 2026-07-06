@@ -6,7 +6,12 @@
 #include "files.h"
 #include "utils.h"
 
-static int readMenuOption(void);
+static int readMenuOption(MagicBook **library);
+static int readBookId(const char *message, int *id);
+static int countRegisteredBooks(MagicBook **library);
+static void printMenuLine(const char *text);
+static void printMenuInfoLine(const char *label, const char *value);
+static void printMenuBorder(char character);
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +30,7 @@ int main(int argc, char *argv[])
 
     do
     {
-        option = readMenuOption();
+        option = readMenuOption(library);
 
         switch (option)
         {
@@ -34,48 +39,42 @@ int main(int argc, char *argv[])
                 break;
 
             case 2:
-                printf("Enter the ID of the book to delete: ");
+                printf("\n+------------------- DELETE BOOK --------------------+\n\n");
 
-                if (scanf("%d", &id) == 1)
+                if (readBookId("Enter the ID of the book to delete: ", &id))
                 {
-                    clearInputBuffer();
                     deleteBookById(library, id);
                 }
                 else
                 {
-                    clearInputBuffer();
                     printf("Invalid ID.\n");
                 }
 
                 break;
 
             case 3:
-                printf("Enter the ID of the book to display: ");
+                printf("\n+------------------- DISPLAY BOOK -------------------+\n\n");
 
-                if (scanf("%d", &id) == 1)
+                if (readBookId("Enter the ID of the book to display: ", &id))
                 {
-                    clearInputBuffer();
                     displayBookById(library, id);
                 }
                 else
                 {
-                    clearInputBuffer();
                     printf("Invalid ID.\n");
                 }
 
                 break;
 
             case 4:
-                printf("Enter the ID of the book to update: ");
+                printf("\n+------------------- UPDATE BOOK --------------------+\n\n");
 
-                if (scanf("%d", &id) == 1)
+                if (readBookId("Enter the ID of the book to update: ", &id))
                 {
-                    clearInputBuffer();
                     updateBookById(library, id);
                 }
                 else
                 {
-                    clearInputBuffer();
                     printf("Invalid ID.\n");
                 }
 
@@ -86,9 +85,10 @@ int main(int argc, char *argv[])
                 break;
 
             case 6:
+                printf("\n+--------------------- EXITING ----------------------+\n\n");
                 saveLibraryToFile(library, argv[1]);
                 freeLibrary(library);
-                printf("Exiting...\n");
+                printf("Exiting Magic Library...\n");
                 break;
 
             default:
@@ -100,18 +100,28 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-static int readMenuOption(void)
+static int readMenuOption(MagicBook **library)
 {
     int option;
     int result;
+    char countText[32];
 
-    printf("\n--- Magic Library Menu ---\n");
-    printf("1. Register book\n");
-    printf("2. Delete book\n");
-    printf("3. Display book\n");
-    printf("4. Update book\n");
-    printf("5. List book titles\n");
-    printf("6. Exit\n");
+    snprintf(countText, sizeof(countText), "%03d/%03d", countRegisteredBooks(library), LIBRARY_SIZE);
+
+    printf("\n");
+    printMenuBorder('=');
+    printMenuLine("MAGIC LIBRARY");
+    printMenuLine("Enchanted Book Inventory");
+    printMenuBorder('=');
+    printMenuInfoLine("Registered books", countText);
+    printMenuBorder('-');
+    printMenuLine("[1] Register book");
+    printMenuLine("[2] Delete book");
+    printMenuLine("[3] Display book");
+    printMenuLine("[4] Update book");
+    printMenuLine("[5] List book titles");
+    printMenuLine("[6] Save and exit");
+    printMenuBorder('=');
     printf("Choose an option: ");
 
     result = scanf("%d", &option);
@@ -130,4 +140,61 @@ static int readMenuOption(void)
     }
 
     return option;
+}
+
+static int readBookId(const char *message, int *id)
+{
+    int result;
+
+    printf("%s", message);
+
+    result = scanf("%d", id);
+    clearInputBuffer();
+
+    return result == 1;
+}
+
+static int countRegisteredBooks(MagicBook **library)
+{
+    int i;
+    int count;
+
+    count = 0;
+
+    for (i = 0; i < LIBRARY_SIZE; i++)
+    {
+        if (library[i] != NULL)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static void printMenuLine(const char *text)
+{
+    printf("| %-50.50s |\n", text);
+}
+
+static void printMenuInfoLine(const char *label, const char *value)
+{
+    char line[128];
+
+    snprintf(line, sizeof(line), "%s: %s", label, value);
+    printMenuLine(line);
+}
+
+static void printMenuBorder(char character)
+{
+    int i;
+
+    printf("+");
+
+    for (i = 0; i < 52; i++)
+    {
+        printf("%c", character);
+    }
+
+    printf("+\n");
 }
