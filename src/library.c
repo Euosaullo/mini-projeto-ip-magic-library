@@ -12,10 +12,27 @@ static int readBookAttributes(BookAttributes *attributes);
 static void initializeBookAttributes(BookAttributes *attributes);
 static int readOptionalAttribute(const char *question, const char *valueMessage, int *hasAttribute, int *attributeValue);
 static int editBookAttributes(BookAttributes *attributes, int *changed);
-static int editOptionalAttribute(const char *editQuestion, const char *presenceQuestion, const char *valueMessage, int *hasAttribute, int *attributeValue, int *changed);
+static int editOptionalAttribute(const char *editQuestion,
+                                 const char *presenceQuestion,
+                                 const char *valueMessage,
+                                 int *hasAttribute,
+                                 int *attributeValue,
+                                 int *changed);
 static int askYesOrNo(const char *message, int *answer);
 static int readAttributeValue(const char *message, int *value);
 static void displayBookAttributes(const BookAttributes *attributes);
+static void displayBookPowerProfile(const BookAttributes *attributes);
+static void includeAttributeInPowerProfile(int hasAttribute,
+                                           int value,
+                                           const char *attributeName,
+                                           const char *archetype,
+                                           int *activeCount,
+                                           int *totalValue,
+                                           int *dominantValue,
+                                           const char **dominantAttribute,
+                                           const char **bookArchetype);
+static int calculatePowerLevel(double average);
+static const char *getPowerRank(int powerLevel);
 static int hasAnyBookAttribute(const BookAttributes *attributes);
 static void printSectionHeader(const char *title);
 
@@ -176,6 +193,7 @@ void displayBookById(MagicBook **library, int id)
            book->writingDate.year);
 
     displayBookAttributes(&book->attributes);
+    displayBookPowerProfile(&book->attributes);
 }
 
 void updateBookById(MagicBook **library, int id)
@@ -200,7 +218,7 @@ void updateBookById(MagicBook **library, int id)
 
     book = library[index];
 
-    printf("\nID selecionado: %d\n\n", id);
+    printf("\nSelected ID: %d\n\n", id);
 
     changed = 0;
     copyText(newTitle, book->title, TEXT_SIZE);
@@ -694,6 +712,190 @@ static void displayBookAttributes(const BookAttributes *attributes)
     if (attributes->hasMagic)
     {
         printf("MAG / Magic: %d\n", attributes->magic);
+    }
+}
+
+static void displayBookPowerProfile(const BookAttributes *attributes)
+{
+    int activeCount;
+    int totalValue;
+    int dominantValue;
+    int powerLevel;
+    double average;
+    const char *dominantAttribute;
+    const char *bookArchetype;
+
+    activeCount = 0;
+    totalValue = 0;
+    dominantValue = -1;
+    dominantAttribute = "None";
+    bookArchetype = "None";
+
+    includeAttributeInPowerProfile(attributes->hasStrength,
+                                   attributes->strength,
+                                   "FOR / Strength",
+                                   "Warrior Tome",
+                                   &activeCount,
+                                   &totalValue,
+                                   &dominantValue,
+                                   &dominantAttribute,
+                                   &bookArchetype);
+
+    includeAttributeInPowerProfile(attributes->hasDexterity,
+                                   attributes->dexterity,
+                                   "DES / Dexterity",
+                                   "Rogue Manual",
+                                   &activeCount,
+                                   &totalValue,
+                                   &dominantValue,
+                                   &dominantAttribute,
+                                   &bookArchetype);
+
+    includeAttributeInPowerProfile(attributes->hasConstitution,
+                                   attributes->constitution,
+                                   "CON / Constitution",
+                                   "Guardian Codex",
+                                   &activeCount,
+                                   &totalValue,
+                                   &dominantValue,
+                                   &dominantAttribute,
+                                   &bookArchetype);
+
+    includeAttributeInPowerProfile(attributes->hasIntelligence,
+                                   attributes->intelligence,
+                                   "INT / Intelligence",
+                                   "Scholar Grimoire",
+                                   &activeCount,
+                                   &totalValue,
+                                   &dominantValue,
+                                   &dominantAttribute,
+                                   &bookArchetype);
+
+    includeAttributeInPowerProfile(attributes->hasWisdom,
+                                   attributes->wisdom,
+                                   "SAB / Wisdom",
+                                   "Oracle Scroll",
+                                   &activeCount,
+                                   &totalValue,
+                                   &dominantValue,
+                                   &dominantAttribute,
+                                   &bookArchetype);
+
+    includeAttributeInPowerProfile(attributes->hasCharisma,
+                                   attributes->charisma,
+                                   "CAR / Charisma",
+                                   "Royal Manuscript",
+                                   &activeCount,
+                                   &totalValue,
+                                   &dominantValue,
+                                   &dominantAttribute,
+                                   &bookArchetype);
+
+    includeAttributeInPowerProfile(attributes->hasMagic,
+                                   attributes->magic,
+                                   "MAG / Magic",
+                                   "Arcane Spellbook",
+                                   &activeCount,
+                                   &totalValue,
+                                   &dominantValue,
+                                   &dominantAttribute,
+                                   &bookArchetype);
+
+    average = 0.0;
+
+    if (activeCount > 0)
+    {
+        average = (double) totalValue / activeCount;
+    }
+
+    powerLevel = calculatePowerLevel(average);
+
+    printSectionHeader("POWER PROFILE");
+    printf("Active attributes: %d/7\n", activeCount);
+    printf("Average attribute value: %.2f\n", average);
+    printf("Power level: %d/5\n", powerLevel);
+    printf("Rank: %s\n", getPowerRank(powerLevel));
+    printf("Dominant attribute: %s\n", dominantAttribute);
+    printf("Book archetype: %s\n", bookArchetype);
+}
+
+static void includeAttributeInPowerProfile(int hasAttribute,
+                                           int value,
+                                           const char *attributeName,
+                                           const char *archetype,
+                                           int *activeCount,
+                                           int *totalValue,
+                                           int *dominantValue,
+                                           const char **dominantAttribute,
+                                           const char **bookArchetype)
+{
+    if (!hasAttribute)
+    {
+        return;
+    }
+
+    (*activeCount)++;
+    *totalValue += value;
+
+    if (value > *dominantValue)
+    {
+        *dominantValue = value;
+        *dominantAttribute = attributeName;
+        *bookArchetype = archetype;
+    }
+}
+
+static int calculatePowerLevel(double average)
+{
+    if (average <= 0.0)
+    {
+        return 0;
+    }
+
+    if (average <= 4.0)
+    {
+        return 1;
+    }
+
+    if (average <= 8.0)
+    {
+        return 2;
+    }
+
+    if (average <= 12.0)
+    {
+        return 3;
+    }
+
+    if (average <= 16.0)
+    {
+        return 4;
+    }
+
+    return 5;
+}
+
+static const char *getPowerRank(int powerLevel)
+{
+    switch (powerLevel)
+    {
+        case 1:
+            return "Weak";
+
+        case 2:
+            return "Apprentice";
+
+        case 3:
+            return "Adept";
+
+        case 4:
+            return "Arcane";
+
+        case 5:
+            return "Legendary";
+
+        default:
+            return "No power level";
     }
 }
 
