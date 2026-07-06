@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-output="biblioteca"
+output="library"
 
 case "$(uname -s)" in
     MINGW*|MSYS*|CYGWIN*)
-        output="biblioteca.exe"
+        output="library.exe"
         ;;
 esac
 
